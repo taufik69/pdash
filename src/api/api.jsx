@@ -7,15 +7,16 @@ const api = axios.create({
 
 // create category apofdk
 export const createCategory = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => {
       return api.post("/categories/create-category", data);
     },
     onSuccess: (data) => {
       console.log("data");
-      //   queryClient.invalidateQueries({
-      //     queryKey: ["categories"],
-      //   });
+      queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -25,12 +26,16 @@ export const createCategory = () => {
 
 // update category
 export const updateCategory = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => {
       return api.put(`/categories/update-category/${data.slug}`, data);
     },
     onSuccess: (data) => {
       console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -69,12 +74,16 @@ export const deleteCategory = () => {
 
 // create product
 export const createProduct = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => {
       return api.post("/product/create-product", data);
     },
     onSuccess: (data) => {
       console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -84,12 +93,16 @@ export const createProduct = () => {
 
 // update product
 export const updateProduct = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => {
       return api.put(`/product/update-productinfo/${data.slug}`, data);
     },
     onSuccess: (data) => {
       console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -99,6 +112,7 @@ export const updateProduct = () => {
 
 // delete product image
 export const deleteProductImage = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => {
       return api.delete(
@@ -107,6 +121,9 @@ export const deleteProductImage = () => {
     },
     onSuccess: (data) => {
       console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -116,6 +133,7 @@ export const deleteProductImage = () => {
 
 // upload product image
 export const uploadProductImage = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => {
       return api.post(
@@ -125,6 +143,9 @@ export const uploadProductImage = () => {
     },
     onSuccess: (data) => {
       console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
     },
     onError: (error) => {
       console.log(error);
@@ -148,6 +169,67 @@ export const deleteProduct = () => {
   return useMutation({
     mutationFn: (slug) => {
       return api.delete(`/product/delete-product/${slug}`);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+// ==========================
+// VARIANT APIs
+// ==========================
+
+// add variants
+export const addVariants = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => {
+      return api.post(`/product/add-variants/${data.slug}`, { variants: data.variants });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+// update a single variant
+export const updateVariant = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => {
+      return api.put(`/product/update-variant/${data.slug}/${data.variantId}`, data.payload);
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+};
+
+// delete a single variant
+export const deleteVariant = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => {
+      return api.delete(`/product/delete-variant/${data.slug}/${data.variantId}`);
     },
     onSuccess: (data) => {
       console.log(data);

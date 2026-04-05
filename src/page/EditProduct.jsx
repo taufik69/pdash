@@ -4,11 +4,14 @@ import {
   uploadProductImage,
   getCategory,
   getBrand,
-  getSubCategory
+  getSubCategory,
+  addVariants,
+  deleteVariant,
+  updateVariant,
 } from "@/api/api";
 import { useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Package, ArrowLeft, ImagePlus, X, Trash2, Plus } from "lucide-react";
+import { Package, ArrowLeft, ImagePlus, X, Trash2, Plus, Edit2 } from "lucide-react";
 
 // ─── Custom Toast ─────────────────────────────────────────────────────────────
 function useToast() {
@@ -109,13 +112,21 @@ export default function EditProduct() {
   const updateProductMutate = updateProduct();
   const deleteImageMutate = deleteProductImage();
   const uploadImageMutate = uploadProductImage();
+  const addVariantsMutate = addVariants();
+  const deleteVariantMutate = deleteVariant();
+  const updateVariantMutate = updateVariant();
 
   const { data: categoryData, isLoading: categoryLoading } = getCategory();
   const { data: brandData, isLoading: brandLoading } = getBrand();
   const { data: subCatData, isLoading: subCatLoading } = getSubCategory();
 
   const [existingImages, setExistingImages] = useState(product?.image || []);
+  const [existingVariants, setExistingVariants] = useState(product?.variants || []);
   const [deletingImgId, setDeletingImgId] = useState(null);
+  const [deletingVariantId, setDeletingVariantId] = useState(null);
+  const [addingVariant, setAddingVariant] = useState(false);
+  const [editingVariantId, setEditingVariantId] = useState(null);
+  const [editVForm, setEditVForm] = useState(null);
   const [newFiles, setNewFiles] = useState([]);
   const [newPreviews, setNewPreviews] = useState([]);
 
@@ -141,7 +152,6 @@ export default function EditProduct() {
     color: product?.color?.join(", ") || "",
     size: product?.size?.join(", ") || "",
     hasVariants: product?.hasVariants || false,
-    variants: product?.variants || [],
   });
 
   const [errors, setErrors] = useState({});
@@ -208,20 +218,100 @@ export default function EditProduct() {
     );
   };
 
-  const addVariant = () => {
+  const handleAddVariant = () => {
     if (!vForm.color || !vForm.size || !vForm.price || !vForm.stock) {
       toast.error("Please fill required fields (Color, Size, Price, Stock) for variant.");
       return;
     }
-    setFormData((p) => ({
-      ...p,
-      variants: [...p.variants, { ...vForm, price: Number(vForm.price), stock: Number(vForm.stock) }]
-    }));
-    setVForm({ color: "", size: "", sku: "", price: "", stock: "" });
+    const newVariant = { ...vForm, price: Number(vForm.price), stock: Number(vForm.stock) };
+    
+    setAddingVariant(true);
+    addVariantsMutate.mutate(
+      { slug: product.slug, variants: [newVariant] },
+      {
+        onSuccess: (res) => {
+          const updatedProduct = res?.data?.data || res?.data;
+          if (updatedProduct?.variants) {
+            setExistingVariants(updatedProduct.variants);
+          }
+          setVForm({ color: "", size: "", sku: "", price: "", stock: "" });
+          toast.success("Variant added successfully.");
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "Failed to add variant.");
+        },
+        onSettled: () => setAddingVariant(false)
+      }
+    );
   };
 
-  const removeVariant = (idx) => {
-    setFormData((p) => ({ ...p, variants: p.variants.filter((_, i) => i !== idx) }));
+  const handleDeleteVariant = (variantId) => {
+    setDeletingVariantId(variantId);
+    deleteVariantMutate.mutate(
+      { slug: product.slug, variantId },
+      {
+        onSuccess: (res) => {
+          const updatedProduct = res?.data?.data || res?.data;
+          if (updatedProduct?.variants) {
+            setExistingVariants(updatedProduct.variants);
+          } else {
+            setExistingVariants(p => p.filter(v => v._id !== variantId));
+          }
+          toast.success("Variant deleted.");
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "Failed to delete variant.");
+        },
+        onSettled: () => setDeletingVariantId(null)
+      }
+    );
+  };
+
+  const handleEditClick = (v) => {
+    setEditingVariantId(v._id);
+    setEditVForm({ ...v });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingVariantId(null);
+    setEditVForm(null);
+  };
+
+  const handleUpdateVariant = () => {
+    if (!editVForm.color || !editVForm.size || editVForm.price === "" || editVForm.stock === "") {
+      toast.error("Please fill required fields (Color, Size, Price, Stock) for variant.");
+      return;
+    }
+    
+    updateVariantMutate.mutate(
+      { 
+        slug: product.slug, 
+        variantId: editingVariantId, 
+        payload: {
+          color: editVForm.color,
+          size: editVForm.size,
+          sku: editVForm.sku,
+          price: Number(editVForm.price),
+          stock: Number(editVForm.stock)
+        }
+      },
+      {
+        onSuccess: (res) => {
+          const updatedProduct = res?.data?.data || res?.data;
+          if (updatedProduct?.variants) {
+            setExistingVariants(updatedProduct.variants);
+          } else {
+             setExistingVariants(p => p.map(v => v._id === editingVariantId ? { ...editVForm, price: Number(editVForm.price), stock: Number(editVForm.stock) } : v));
+          }
+          toast.success("Variant updated successfully.");
+          setEditingVariantId(null);
+          setEditVForm(null);
+        },
+        onError: (err) => {
+          toast.error(err?.response?.data?.message || "Failed to update variant.");
+        }
+      }
+    );
   };
 
   const relevantSubcategories = subCatData?.data?.data?.filter(
@@ -247,37 +337,35 @@ export default function EditProduct() {
       return;
     }
 
-    const payload = new FormData();
-    payload.append("name", formData.name.trim());
-    payload.append("sku", formData.sku.trim());
-    payload.append("description", formData.description.trim());
-    if (formData.shortDescription.trim()) payload.append("shortDescription", formData.shortDescription.trim());
-    payload.append("category", formData.category);
-    if(formData.subcategory) payload.append("subcategory", formData.subcategory);
-    if(formData.brandRef) payload.append("brandRef", formData.brandRef);
+    const payload = {};
+    payload.name = formData.name.trim();
+    payload.sku = formData.sku.trim();
+    payload.description = formData.description.trim();
+    if (formData.shortDescription.trim()) payload.shortDescription = formData.shortDescription.trim();
+    payload.category = formData.category;
+    if(formData.subcategory) payload.subcategory = formData.subcategory;
+    if(formData.brandRef) payload.brandRef = formData.brandRef;
 
-    payload.append("price", Number(formData.price));
-    if (formData.discountType) payload.append("discountType", formData.discountType);
-    if (formData.discountValue !== "") payload.append("discountValue", Number(formData.discountValue));
-    payload.append("stock", Number(formData.stock));
-    if (formData.totalReviews !== "") payload.append("totalReviews", Number(formData.totalReviews));
+    payload.price = Number(formData.price);
+    if (formData.discountType) payload.discountType = formData.discountType;
+    if (formData.discountValue !== "") payload.discountValue = Number(formData.discountValue);
+    payload.stock = Number(formData.stock);
+    if (formData.totalReviews !== "") payload.totalReviews = Number(formData.totalReviews);
     
     // Flags
-    payload.append("isNew", formData.isNew);
-    payload.append("isSale", formData.isSale);
-    payload.append("isLimited", formData.isLimited);
-    payload.append("isHot", formData.isHot);
-    payload.append("isFeatured", formData.isFeatured);
-    payload.append("isBestSelling", formData.isBestSelling);
+    payload.isNew = formData.isNew;
+    payload.isSale = formData.isSale;
+    payload.isLimited = formData.isLimited;
+    payload.isHot = formData.isHot;
+    payload.isFeatured = formData.isFeatured;
+    payload.isBestSelling = formData.isBestSelling;
     
     // Arrays
-    colors.forEach((c) => payload.append("color[]", c));
-    sizes.forEach((sz) => payload.append("size[]", sz));
+    if (colors.length > 0) payload.color = colors;
+    if (sizes.length > 0) payload.size = sizes;
     
     // Variants array
-    if (formData.hasVariants && formData.variants.length > 0) {
-      payload.append("variants", JSON.stringify(formData.variants));
-    }
+    payload.hasVariants = formData.hasVariants;
 
     payload.slug = product.slug;
 
@@ -397,15 +485,51 @@ export default function EditProduct() {
 
           {formData.hasVariants && (
             <div style={s.variantContainer}>
-              {formData.variants.length > 0 && (
+              {existingVariants.length > 0 && (
                 <div style={s.vList}>
-                  {formData.variants.map((v, i) => (
-                    <div key={i} style={s.vItem}>
-                      <div style={s.vInfo}>
-                        <div style={s.vTitle}>{v.color} - {v.size} {v.sku ? `(${v.sku})` : ""}</div>
-                        <div style={s.vDetails}>Price: ${v.price} &middot; Stock: {v.stock}</div>
-                      </div>
-                      <button type="button" onClick={() => removeVariant(i)} style={s.vRemove}><Trash2 size={16} /></button>
+                  {existingVariants.map((v, i) => (
+                    <div key={v._id || v.sku || i} style={s.vItem}>
+                      {editingVariantId === v._id ? (
+                        <div style={{ width: "100%" }}>
+                          <div className="ep-grid-3" style={{ gap: 10, marginBottom: 10 }}>
+                            <input value={editVForm.color} onChange={e => setEditVForm(p => ({...p, color: e.target.value}))} placeholder="Color" style={{...s.input, padding: "6px 10px", fontSize: 13}} />
+                            <input value={editVForm.size} onChange={e => setEditVForm(p => ({...p, size: e.target.value}))} placeholder="Size" style={{...s.input, padding: "6px 10px", fontSize: 13}} />
+                            <input value={editVForm.sku} onChange={e => setEditVForm(p => ({...p, sku: e.target.value}))} placeholder="SKU" style={{...s.input, padding: "6px 10px", fontSize: 13}} />
+                            <input type="number" value={editVForm.price} onChange={e => setEditVForm(p => ({...p, price: e.target.value}))} placeholder="Price" min="0" step="0.01" style={{...s.input, padding: "6px 10px", fontSize: 13}} />
+                            <input type="number" value={editVForm.stock} onChange={e => setEditVForm(p => ({...p, stock: e.target.value}))} placeholder="Stock" min="0" style={{...s.input, padding: "6px 10px", fontSize: 13}} />
+                          </div>
+                          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                            <button type="button" onClick={handleCancelEdit} style={{...s.addVariantBtn, width: "auto", padding: "0 12px", height: 30, background: "transparent", border: "1px solid #374151"}}>Cancel</button>
+                            <button type="button" onClick={handleUpdateVariant} disabled={updateVariantMutate.isPending} style={{...s.addVariantBtn, width: "auto", padding: "0 12px", height: 30, background: "#059669", color: "#fff"}}>
+                              {updateVariantMutate.isPending ? "Saving..." : "Save"}
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div style={s.vInfo}>
+                            <div style={s.vTitle}>{v.color} - {v.size} {v.sku ? `(${v.sku})` : ""}</div>
+                            <div style={s.vDetails}>Price: ${v.price} &middot; Stock: {v.stock}</div>
+                          </div>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <button 
+                              type="button" 
+                              onClick={() => handleEditClick(v)}
+                              style={{ ...s.vActionBtn, color: "#9ca3af" }}
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button 
+                              type="button" 
+                              onClick={() => handleDeleteVariant(v._id)} 
+                              disabled={deletingVariantId === v._id}
+                              style={{ ...s.vActionBtn, color: "#f87171", ...(deletingVariantId === v._id ? s.btnDisabled : {}) }}
+                            >
+                              {deletingVariantId === v._id ? <span style={{ ...s.spinner, width: 14, height: 14, borderTopColor: '#f87171' }} /> : <Trash2 size={16} />}
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -430,7 +554,9 @@ export default function EditProduct() {
                     <input type="number" value={vForm.stock} onChange={e => setVForm(p => ({...p, stock: e.target.value}))} placeholder="0" min="0" style={s.input} />
                   </Field>
                   <div style={{ display: "flex", alignItems: "flex-end" }}>
-                     <button type="button" onClick={addVariant} style={s.addVariantBtn}><Plus size={16}/> Add to List</button>
+                     <button type="button" onClick={handleAddVariant} disabled={addingVariant} style={{ ...s.addVariantBtn, ...(addingVariant ? s.btnDisabled : {}) }}>
+                       {addingVariant ? <><span style={s.spinner} /> Adding…</> : <><Plus size={16}/> Add to List</>}
+                     </button>
                   </div>
                 </div>
               </div>
@@ -636,7 +762,7 @@ const s = {
   vInfo: { display: "flex", flexDirection: "column", gap: 4 },
   vTitle: { fontSize: 14, fontWeight: 600, color: "#f3f4f6" },
   vDetails: { fontSize: 12, color: "#9ca3af" },
-  vRemove: { background: "none", border: "none", color: "#f87171", cursor: "pointer", padding: 4, display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.8 },
+  vActionBtn: { background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.8 },
   vForm: { background: "rgba(255,255,255,0.02)", border: "1px dashed #1f2937", borderRadius: 8, padding: 16 },
   vFormTitle: { fontSize: 13, fontWeight: 600, color: "#d1d5db", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.05em" },
   addVariantBtn: { width: "100%", height: 42, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#1f2937", color: "#f3f4f6", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" },
