@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, LayoutGrid, Box, PenLine, Zap, Star, Tag, Image } from "lucide-react";
+import { Home, LayoutGrid, Box, PenLine, Zap, Star, Tag, Image, ShieldAlert } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -85,6 +85,16 @@ const data = {
         { title: "Cancelled Orders", url: "/order-list?status=cancelled" },
         // { title: "Returned Orders", url: "/order-list?status=returned" },
         // { title: "Rejected Orders", url: "/order-list?status=rejected" },
+      ],
+    },
+    {
+      title: "Tools & Security",
+      url: "#",
+      icon: ShieldAlert,
+      isActive: true,
+      items: [
+        { title: "Fraud Checker", url: "/fraud-checker" },
+        { title: "IP Block Management", url: "/ip-block" },
       ],
     },
   ],

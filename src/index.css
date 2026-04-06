@@ -121,6 +121,13 @@
   }
   body {
     @apply bg-background text-foreground;
-    @apply bg-background text-foreground;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Square Image Utility */
+  .aspect-square {
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
   }
 }

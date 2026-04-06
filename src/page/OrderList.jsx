@@ -405,6 +405,13 @@ function OrderRow({
           </button>
           <button
             style={{ ...s.viewBtn, ...(isHovered ? s.viewBtnHover : {}) }}
+            onClick={() => navigate(`/fraud-checker?phone=${order.customer?.phone}`)}
+            title="Check Fraud History"
+          >
+            <ShieldAlert size={14} color="#f87171" />
+          </button>
+          <button
+            style={{ ...s.viewBtn, ...(isHovered ? s.viewBtnHover : {}) }}
             onClick={() => onUpdateStatus(order)}
             title="Update order status"
           >

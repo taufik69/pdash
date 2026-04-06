@@ -22,6 +22,10 @@ const SubCategoryList = lazy(() => import("./page/SubCategoryList"));
 const AddBanner = lazy(() => import("./page/AddBanner"));
 const BannerList = lazy(() => import("./page/BannerList"));
 const EditBanner = lazy(() => import("./page/EditBanner"));
+const FraudChecker = lazy(() => import("./page/FraudChecker"));
+const IPBlockManager = lazy(() => import("./page/IPBlockManager"));
+
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -57,6 +61,8 @@ export default function App() {
               <Route path="add-banner" element={<AddBanner />} />
               <Route path="banner-list" element={<BannerList />} />
               <Route path="edit-banner/:id" element={<EditBanner />} />
+              <Route path="fraud-checker" element={<FraudChecker />} />
+              <Route path="ip-block" element={<IPBlockManager />} />
             </Route>
           </Route>
 

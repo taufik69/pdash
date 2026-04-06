@@ -279,7 +279,18 @@ export default function OrderDetails() {
           {/* Customer */}
           <SectionCard icon={User} title="Customer Information">
             <InfoRow label="Full Name" value={order.customer?.fullName} />
-            <InfoRow label="Phone" value={order.customer?.phone} mono />
+            <div style={{...s.infoRow, borderBottom: 'none'}}>
+               <span style={s.infoLabel}>Phone</span>
+               <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4}}>
+                  <span style={{...s.infoValue, ...s.mono}}>{order.customer?.phone || "—"}</span>
+                  <button 
+                    onClick={() => navigate(`/fraud-checker?phone=${order.customer?.phone}`)}
+                    style={{fontSize: 10, color: '#f87171', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)', padding: '2px 8px', borderRadius: 4, cursor: 'pointer'}}
+                  >
+                    Check Fraud History
+                  </button>
+               </div>
+            </div>
             <InfoRow label="Email" value={order.customer?.email} />
           </SectionCard>
 

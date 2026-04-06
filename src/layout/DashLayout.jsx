@@ -23,7 +23,7 @@ const styles = `
     display: flex;
     height: 100vh;
     width: 100%;
-    background: #111827;
+    background: #ffffff;
     font-family: 'DM Mono', 'Fira Mono', 'Courier New', monospace;
     overflow: hidden;
   }
@@ -32,13 +32,14 @@ const styles = `
   .dashboard-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 12px;
     height: 52px;
     flex-shrink: 0;
     padding: 0 20px;
-    border-bottom: 1px solid #1f2937;
+    border-bottom: 1px solid #e5e7eb;
     position: relative;
-    background: #111827;
+    background: #ffffff;
   }
 
   /* thin amber rule at very bottom of header */
@@ -105,7 +106,7 @@ const styles = `
     flex-direction: column;
     flex: 1;
     min-width: 0;
-    background: #111827;
+    background: #ffffff;
   }
 
   /* ── Main scroll area ─────────────────────────────────── */
@@ -113,12 +114,8 @@ const styles = `
     flex: 1;
     overflow: auto;
     padding: 24px 28px;
-    /* subtle grid texture */
-    background-image:
-      linear-gradient(#ffffff04 1px, transparent 1px),
-      linear-gradient(90deg, #ffffff04 1px, transparent 1px);
-    background-size: 32px 32px;
-    background-position: -1px -1px;
+    background: #ffffff;
+    color: #111827;
   }
 
   /* custom scrollbar */
@@ -171,11 +168,11 @@ const styles = `
   }
 
   /* ── Sidebar border accent ────────────────────────────── */
-  /* Adds a subtle amber right-edge glow to the sidebar panel */
   [data-sidebar="sidebar"] {
-    border-right: 1px solid #1f2937 !important;
-    box-shadow: 2px 0 12px #da770808 !important;
-    background: #0f1623 !important;
+    border-right: 1px solid #e5e7eb !important;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.05) !important;
+    background: #ffffff !important;
+    color: #111827 !important;
   }
 `;
 
@@ -192,13 +189,46 @@ function DashboardLayout() {
           <SidebarInset className="dashboard-inset">
             {/* Header */}
             <header className="dashboard-header">
-              <SidebarTrigger className="dashboard-trigger" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <SidebarTrigger className="dashboard-trigger" />
 
-              {/* Breadcrumb slot — customize per route if needed */}
-              <div className="header-breadcrumb">
-                <span>Platform</span>
-                <span className="sep">/</span>
-                <span className="active">Dashboard</span>
+                {/* Breadcrumb slot — customize per route if needed */}
+                <div className="header-breadcrumb">
+                  <span>Platform</span>
+                  <span className="sep">/</span>
+                  <span className="active">Dashboard</span>
+                </div>
+              </div>
+
+              {/* Visit Site Button */}
+              <div>
+                <a
+                  href="http://localhost:3000"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    backgroundColor: '#da7708',
+                    color: '#ffffff',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    textDecoration: 'none',
+                    transition: 'opacity 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  সাইট ভিজিট
+                </a>
               </div>
             </header>
 
