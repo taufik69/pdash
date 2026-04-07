@@ -33,9 +33,9 @@ function useToast() {
   };
 }
 const TOAST_META = {
-  success: { bg: "#064e3b", color: "#6ee7b7", border: "#065f46", icon: "✓" },
-  error: { bg: "#450a0a", color: "#fca5a5", border: "#7f1d1d", icon: "✕" },
-  info: { bg: "#0c1a3a", color: "#93c5fd", border: "#1e3a6e", icon: "i" },
+  success: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "✓" },
+  error: { bg: "var(--background)", color: "var(--destructive)", border: "var(--border)", icon: "✕" },
+  info: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "i" },
 };
 function ToastStack({ toasts, onRemove }) {
   if (!toasts.length) return null;
@@ -101,44 +101,44 @@ const FLAGS = [
   {
     key: "isNew",
     label: "New",
-    bg: "rgba(16,185,129,0.15)",
-    color: "#34d399",
-    border: "rgba(16,185,129,0.3)",
+    bg: "oklch(0.7 0.15 150 / 0.15)",
+    color: "oklch(0.7 0.15 150)",
+    border: "oklch(0.7 0.15 150 / 0.3)",
   },
   {
     key: "isSale",
     label: "Sale",
-    bg: "rgba(239,68,68,0.15)",
-    color: "#f87171",
-    border: "rgba(239,68,68,0.3)",
+    bg: "var(--destructive-foreground)",
+    color: "var(--destructive)",
+    border: "var(--destructive)",
   },
   {
     key: "isLimited",
     label: "Limited",
-    bg: "rgba(251,191,36,0.15)",
-    color: "#fbbf24",
-    border: "rgba(251,191,36,0.3)",
+    bg: "oklch(0.7 0.15 80 / 0.15)",
+    color: "oklch(0.7 0.15 80)",
+    border: "oklch(0.7 0.15 80 / 0.3)",
   },
   {
     key: "isHot",
     label: "Hot",
-    bg: "rgba(251,146,60,0.15)",
-    color: "#fb923c",
-    border: "rgba(251,146,60,0.3)",
+    bg: "oklch(0.6 0.15 40 / 0.15)",
+    color: "oklch(0.6 0.15 40)",
+    border: "oklch(0.6 0.15 40 / 0.3)",
   },
   {
     key: "isFeatured",
     label: "Featured",
-    bg: "rgba(99,102,241,0.15)",
-    color: "#818cf8",
-    border: "rgba(99,102,241,0.3)",
+    bg: "oklch(0.6 0.15 250 / 0.15)",
+    color: "oklch(0.6 0.15 250)",
+    border: "oklch(0.6 0.15 250 / 0.3)",
   },
   {
     key: "isBestSelling",
     label: "Best Selling",
-    bg: "rgba(217,119,6,0.15)",
-    color: "#fbbf24",
-    border: "rgba(217,119,6,0.3)",
+    bg: "oklch(0.7 0.15 60 / 0.15)",
+    color: "oklch(0.7 0.15 60)",
+    border: "oklch(0.7 0.15 60 / 0.3)",
   },
 ];
 
@@ -223,12 +223,12 @@ function ProductDetailModal({ prod, onClose, onEdit }) {
             label="Price"
             value={
               <span>
-                <span style={{ color: "#f3f4f6", fontWeight: 700 }}>
+                <span style={{ color: "var(--foreground)", fontWeight: 700 }}>
                   ${Number(prod.price).toFixed(2)}
                 </span>
                 {effectivePrice !== null && (
                   <span
-                    style={{ color: "#34d399", fontSize: 11, marginLeft: 6 }}
+                    style={{ color: "var(--success)", fontSize: 11, marginLeft: 6 }}
                   >
                     → ${effectivePrice.toFixed(2)} after discount
                   </span>
@@ -241,13 +241,13 @@ function ProductDetailModal({ prod, onClose, onEdit }) {
             label="Stock"
             value={
               prod.stock === 0 ? (
-                <span style={{ color: "#f87171", fontWeight: 600 }}>
+                <span style={{ color: "var(--destructive)", fontWeight: 600 }}>
                   Out of Stock
                 </span>
               ) : (
                 <span
                   style={{
-                    color: prod.stock < 10 ? "#fb923c" : "#34d399",
+                    color: prod.stock < 10 ? "oklch(0.7 0.15 80)" : "var(--success)",
                     fontWeight: 600,
                   }}
                 >
@@ -349,8 +349,8 @@ function useVirtualList(items, containerRef) {
 function StatCard({ icon: Icon, label, value, accent }) {
   return (
     <div style={s.statCard}>
-      <div style={{ ...s.statIcon, background: accent + "18", color: accent }}>
-        <Icon size={18} />
+      <div style={{ ...s.statIcon, background: 'var(--secondary)', color: 'var(--foreground)' }}>
+        <Icon size={20} />
       </div>
       <div>
         <div style={s.statValue}>{value}</div>
@@ -375,7 +375,7 @@ function ProductRow({
     <tr
       style={{
         ...s.tr,
-        background: isHovered ? "#1a2233" : "transparent",
+        background: isHovered ? "var(--secondary)" : "transparent",
         height: ROW_HEIGHT,
         cursor: "pointer",
       }}
@@ -386,7 +386,7 @@ function ProductRow({
     >
       {/* # */}
       <td style={s.td}>
-        <span style={s.indexBadge}>{index + 1}</span>
+        <span style={s.indexBadge}>{index +  startIndex + 1}</span>
       </td>
 
       {/* Image */}
@@ -395,7 +395,7 @@ function ProductRow({
           <img src={prod.image[0].url} alt={prod.name} style={s.prodImg} />
         ) : (
           <div style={s.prodImgPlaceholder}>
-            <Package size={16} color="#4b5563" />
+            <Package size={16} color="var(--muted-foreground)" />
           </div>
         )}
       </td>
@@ -410,7 +410,7 @@ function ProductRow({
 
       {/* SKU */}
       <td style={s.td}>
-        <span style={s.monoText}>{prod.sku || "—"}</span>
+        <span style={s.skuText}>{prod.sku || "—"}</span>
       </td>
 
       {/* Category */}
@@ -457,9 +457,9 @@ function ProductRow({
               key={f.key}
               style={{
                 ...s.flagChip,
-                background: f.bg,
-                color: f.color,
-                border: `1px solid ${f.border}`,
+                background: "var(--secondary)",
+                color: "var(--foreground)",
+                border: "1px solid var(--border)",
               }}
             >
               {f.label}
@@ -473,7 +473,17 @@ function ProductRow({
       <td style={{ ...s.td, textAlign: "center" }}>
         <div style={s.actionsCell}>
           <button
-            style={{ ...s.editBtn, ...(isHovered ? s.editBtnHover : {}) }}
+            style={s.viewBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRowClick(prod);
+            }}
+            title="View details"
+          >
+            <Package size={14} />
+          </button>
+          <button
+            style={s.editBtn}
             onClick={(e) => {
               e.stopPropagation();
               onEdit(prod);
@@ -485,7 +495,6 @@ function ProductRow({
           <button
             style={{
               ...s.deleteBtn,
-              ...(isHovered ? s.deleteBtnHover : {}),
               ...(isDeleting ? s.btnDisabled : {}),
             }}
             onClick={(e) => {
@@ -686,25 +695,21 @@ export default function ProductList() {
           icon={Package}
           label="Total Products"
           value={products.length}
-          accent="#d97706"
         />
         <StatCard
           icon={Layers}
           label="Total Stock"
           value={totalStock}
-          accent="#818cf8"
         />
         <StatCard
           icon={DollarSign}
           label="Avg. Price"
           value={`$${avgPrice}`}
-          accent="#34d399"
         />
         <StatCard
           icon={Package}
           label="Out of Stock"
           value={outOfStock}
-          accent="#f87171"
         />
       </div>
 
@@ -922,103 +927,78 @@ const css = `
   .pl-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px; margin-bottom: 28px;
-  }
-  .pl-card-header {
-    display: flex; justify-content: space-between;
-    align-items: center; flex-wrap: wrap;
-    gap: 14px; padding: 20px 24px;
-    border-bottom: 1px solid #1f2937;
-  }
-  .pl-search-wrap {
-    display: flex; align-items: center; gap: 8px;
-    background: #0d1117; border: 1.5px solid #1f2937;
-    border-radius: 10px; padding: 8px 14px; min-width: 280px;
-  }
-  .pl-btn-add {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: #d97706; color: #fff; border: none;
-    border-radius: 11px; padding: 10px 18px;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
-    white-space: nowrap; flex-shrink: 0; transition: opacity 0.2s;
-  }
-  .pl-btn-add:hover { opacity: 0.88; }
-  .pl-table-footer {
-    padding: 14px 24px; border-top: 1px solid #1f2937;
-    font-size: 12px; color: #4b5563; text-align: right;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
   }
 
-  @media (max-width: 900px) {
-    .pl-stats { grid-template-columns: repeat(2, 1fr); }
-    .pl-card-header { flex-direction: column; align-items: flex-start; padding: 16px 18px; }
-    .pl-search-wrap { width: 100%; min-width: unset; }
+  .pl-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
   }
-  @media (max-width: 600px) {
-    .pl-title { font-size: 21px; }
-    .pl-header { margin-bottom: 18px; }
-    .pl-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
-    .pl-card-header { padding: 14px; }
-    .pl-table-footer { text-align: center; padding: 12px 14px; }
-    .pl-btn-add span { display: none; }
-    .pl-btn-add { padding: 10px 12px; border-radius: 10px; }
+  .pl-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    width: 320px;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  @media (max-width: 420px) {
-    .pl-title { font-size: 18px; }
-    .pl-stats { grid-template-columns: 1fr 1fr; }
+  .pl-search-wrap:focus-within {
+    border-color: var(--foreground);
+    box-shadow: 0 0 0 2px var(--secondary);
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes dialogIn {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes toastSlide {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
   }
 `;
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: {
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#e5e7eb",
-    padding: "32px 24px 80px",
-    animation: "fadeIn 0.35s ease",
+  page: { 
+    maxWidth: 1200, 
+    margin: "0 auto",
+    fontFamily: "'Inter', sans-serif"
   },
-  centerState: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "60vh",
-    gap: 16,
-  },
-  spinner: {
-    width: 40,
-    height: 40,
-    border: "3px solid #1f2937",
-    borderTop: "3px solid #d97706",
-    borderRadius: "50%",
-    animation: "spin 0.8s linear infinite",
-  },
-  stateText: { color: "#6b7280", fontSize: 14 },
-
   breadcrumb: {
     display: "flex",
-    gap: 6,
+    gap: 8,
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: 8,
   },
-  breadcrumbLink: { color: "#6b7280", fontSize: 13, cursor: "pointer" },
-  breadcrumbSep: { color: "#374151" },
-  breadcrumbCurrent: { color: "#d97706", fontSize: 13 },
-  titleSub: { fontSize: 13, color: "#6b7280", margin: 0 },
+  breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
+  breadcrumbSep: { color: "var(--border)", fontSize: 12 },
+  breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0, fontWeight: 400 },
 
   statCard: {
     display: "flex",
     alignItems: "center",
-    gap: 14,
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 14,
-    padding: "16px 20px",
+    gap: 16,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    padding: "20px 24px",
     animation: "slideUp 0.4s ease",
   },
   statIcon: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: 10,
     display: "flex",
     alignItems: "center",
@@ -1026,49 +1006,50 @@ const s = {
     flexShrink: 0,
   },
   statValue: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#f9fafb",
+    fontSize: 24,
+    fontWeight: 800,
+    color: "var(--foreground)",
     lineHeight: 1,
+    letterSpacing: "-0.02em",
   },
-  statLabel: { fontSize: 12, color: "#6b7280", marginTop: 3 },
+  statLabel: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 4, fontWeight: 500 },
 
   card: {
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 18,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
     overflow: "hidden",
     animation: "slideUp 0.45s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
   },
   cardTitleWrap: { display: "flex", alignItems: "center", gap: 14 },
   cardIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    background: "rgba(217,119,6,0.12)",
-    color: "#d97706",
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    background: "var(--secondary)",
+    color: "var(--foreground)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
-  cardTitle: { fontSize: 15, fontWeight: 600, color: "#f3f4f6" },
-  cardSubtitle: { fontSize: 12, color: "#6b7280", marginTop: 2 },
+  cardTitle: { fontSize: 16, fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.01em" },
+  cardSubtitle: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 3 },
 
-  searchIcon: { fontSize: 13, flexShrink: 0 },
+  searchIcon: { fontSize: 14, opacity: 0.5 },
   searchInput: {
     background: "none",
     border: "none",
     outline: "none",
-    color: "#f3f4f6",
-    fontSize: 13,
-    fontFamily: "'DM Sans', sans-serif",
+    color: "var(--foreground)",
+    fontSize: 14,
     width: "100%",
+    fontWeight: 500,
   },
   searchClear: {
     background: "none",
     border: "none",
-    color: "#6b7280",
+    color: "var(--muted-foreground)",
     fontSize: 18,
     cursor: "pointer",
     padding: 0,
@@ -1076,253 +1057,215 @@ const s = {
     flexShrink: 0,
   },
 
-  tableOuterWrap: { overflowX: "auto", WebkitOverflowScrolling: "touch" },
+  tableOuterWrap: { overflowX: "auto" },
   tableHeaderWrap: {
     position: "sticky",
     top: 0,
     zIndex: 2,
-    background: "#0d1117",
-    borderBottom: "1px solid #1f2937",
-    overflowX: "hidden",
+    background: "var(--background)",
+    borderBottom: "1px solid var(--border)",
   },
   tableScrollBody: {
     overflowY: "auto",
-    WebkitOverflowScrolling: "touch",
-    minWidth: 860,
+    minWidth: 900,
   },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: 860 },
+  table: { width: "100%", borderCollapse: "collapse" },
 
   th: {
-    padding: "12px 14px",
-    fontSize: 11,
+    padding: "14px 16px",
+    fontSize: 12,
     fontWeight: 600,
-    color: "#6b7280",
+    color: "var(--muted-foreground)",
     textTransform: "uppercase",
-    letterSpacing: "0.07em",
-    background: "#0d1117",
-    whiteSpace: "nowrap",
+    letterSpacing: "0.05em",
+    textAlign: "left",
   },
-  sortArrow: { color: "#d97706", fontStyle: "normal" },
+  sortArrow: { color: "var(--foreground)", fontStyle: "normal" },
 
   tr: {
-    borderBottom: "1px solid #1a2233",
-    transition: "background 0.12s ease",
+    borderBottom: "1px solid var(--border)",
+    transition: "background 0.2s ease",
   },
   td: {
-    padding: "0 14px",
-    fontSize: 13,
-    color: "#d1d5db",
+    padding: "0 16px",
+    fontSize: 14,
+    color: "var(--foreground)",
     verticalAlign: "middle",
-    height: ROW_HEIGHT,
   },
 
   indexBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 26,
-    height: 26,
-    background: "#1f2937",
-    borderRadius: 7,
     fontSize: 12,
     fontWeight: 600,
-    color: "#9ca3af",
+    color: "var(--muted-foreground)",
   },
 
   prodImg: {
-    width: 46,
-    height: 46,
-    borderRadius: 9,
-    aspectRatio: "1 / 1",
+    width: 44,
+    height: 44,
+    borderRadius: 8,
     objectFit: "cover",
-    border: "1.5px solid #1f2937",
+    border: "1px solid var(--border)",
     display: "block",
   },
   prodImgPlaceholder: {
-    width: 46,
-    height: 46,
-    borderRadius: 9,
-    background: "#1f2937",
-    border: "1.5px solid #374151",
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    background: "var(--secondary)",
+    border: "1px solid var(--border)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
 
-  nameCell: { display: "flex", flexDirection: "column", gap: 2 },
+  nameCell: { display: "flex", flexDirection: "column", gap: 1 },
   prodName: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: 600,
-    color: "#f3f4f6",
-    lineHeight: 1.3,
+    color: "var(--foreground)",
+    lineHeight: 1.4,
   },
-  prodBrand: { fontSize: 11, color: "#6b7280" },
+  prodBrand: { fontSize: 12, color: "var(--muted-foreground)" },
 
-  monoText: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: 11,
-    color: "#9ca3af",
-    letterSpacing: "0.03em",
+  skuText: {
+    fontSize: 12,
+    color: "var(--muted-foreground)",
+    fontWeight: 500,
   },
 
   categoryChip: {
     display: "inline-block",
-    background: "rgba(129,140,248,0.1)",
-    color: "#818cf8",
-    border: "1px solid rgba(129,140,248,0.2)",
+    background: "var(--secondary)",
+    color: "var(--foreground)",
+    border: "1px solid var(--border)",
     borderRadius: 6,
-    padding: "2px 8px",
-    fontSize: 11,
+    padding: "2px 10px",
+    fontSize: 12,
     fontWeight: 500,
   },
 
-  priceCell: { display: "flex", flexDirection: "column", gap: 3 },
-  priceMain: { fontSize: 14, fontWeight: 700, color: "#f3f4f6" },
+  priceCell: { display: "flex", flexDirection: "column", gap: 1 },
+  priceMain: { fontSize: 14, fontWeight: 700, color: "var(--foreground)" },
   discountBadge: {
-    fontSize: 10,
-    color: "#34d399",
-    background: "rgba(16,185,129,0.12)",
-    border: "1px solid rgba(16,185,129,0.25)",
-    borderRadius: 5,
-    padding: "1px 6px",
-    display: "inline-block",
+    fontSize: 11,
+    color: "var(--success)",
+    fontWeight: 600,
   },
 
   stockBadge: {
     display: "inline-block",
-    padding: "3px 10px",
-    borderRadius: 20,
-    fontSize: 12,
+    padding: "2px 10px",
+    borderRadius: 6,
+    fontSize: 13,
     fontWeight: 600,
   },
   stockOk: {
-    background: "rgba(16,185,129,0.1)",
-    color: "#34d399",
-    border: "1px solid rgba(16,185,129,0.25)",
+    color: "var(--success)",
   },
   stockLow: {
-    background: "rgba(251,146,60,0.1)",
-    color: "#fb923c",
-    border: "1px solid rgba(251,146,60,0.25)",
+    color: "#f59e0b",
   },
   outOfStock: {
-    display: "inline-block",
-    padding: "3px 10px",
-    background: "rgba(239,68,68,0.12)",
-    color: "#f87171",
-    border: "1px solid rgba(239,68,68,0.25)",
-    borderRadius: 20,
-    fontSize: 11,
-    fontWeight: 600,
+    color: "var(--destructive)",
+    fontSize: 12,
+    fontWeight: 700,
+    textTransform: "uppercase",
   },
 
   flagsCell: { display: "flex", flexWrap: "wrap", gap: 4 },
   flagChip: {
     display: "inline-block",
-    padding: "2px 7px",
-    borderRadius: 5,
-    fontSize: 10,
+    padding: "2px 8px",
+    borderRadius: 4,
+    fontSize: 11,
     fontWeight: 600,
-    whiteSpace: "nowrap",
   },
-  dash: { color: "#374151" },
+  dash: { color: "var(--border)" },
 
   actionsCell: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: 4,
   },
 
+  viewBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--muted-foreground)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
   editBtn: {
-    display: "inline-flex",
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--success)",
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    background: "rgba(99,102,241,0.1)",
-    border: "1px solid rgba(99,102,241,0.25)",
-    color: "#818cf8",
     cursor: "pointer",
-    transition: "background 0.2s, transform 0.15s",
+    transition: "all 0.2s",
   },
-  editBtnHover: {
-    background: "rgba(99,102,241,0.2)",
-    transform: "scale(1.08)",
-  },
-
   deleteBtn: {
-    display: "inline-flex",
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--destructive)",
+    display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    background: "rgba(239,68,68,0.1)",
-    border: "1px solid rgba(239,68,68,0.25)",
-    color: "#f87171",
     cursor: "pointer",
-    transition: "background 0.2s, transform 0.15s",
+    transition: "all 0.2s",
   },
-  deleteBtnHover: {
-    background: "rgba(239,68,68,0.2)",
-    transform: "scale(1.08)",
-  },
-  btnDisabled: { opacity: 0.45, cursor: "not-allowed", transform: "none" },
+  btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
 
-  // ── Empty state ──
   emptyState: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    padding: "72px 24px",
-    animation: "emptyIn 0.4s cubic-bezier(0.16,1,0.3,1)",
+    gap: 16,
+    padding: "80px 24px",
   },
   emptyIconWrap: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
-    background: "rgba(31,41,55,0.6)",
-    border: "1.5px dashed #374151",
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    background: "var(--secondary)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4,
   },
-  emptyTitle: { fontSize: 16, fontWeight: 600, color: "#9ca3af", margin: 0 },
-  emptyHint: {
-    fontSize: 13,
-    color: "#4b5563",
-    margin: 0,
-    textAlign: "center",
-    maxWidth: 300,
-  },
+  emptyTitle: { fontSize: 18, fontWeight: 700, color: "var(--foreground)", margin: 0 },
+  emptyHint: { fontSize: 14, color: "var(--muted-foreground)", margin: 0, textAlign: "center", maxWidth: 320 },
   emptyBtn: {
-    marginTop: 8,
-    padding: "9px 22px",
-    background: "rgba(217,119,6,0.12)",
-    border: "1px solid rgba(217,119,6,0.3)",
-    color: "#d97706",
-    borderRadius: 10,
-    fontSize: 13,
-    fontWeight: 500,
+    marginTop: 10,
+    padding: "10px 24px",
+    background: "var(--primary)",
+    color: "var(--primary-foreground)",
+    border: "1px solid var(--primary)",
+    borderRadius: 8,
+    fontSize: 14,
+    fontWeight: 600,
     cursor: "pointer",
-    fontFamily: "'DM Sans', sans-serif",
-    transition: "background 0.2s",
   },
 
-  footerVirt: { color: "#374151", marginLeft: 8, fontStyle: "italic" },
-  btnAdd: {},
-
-  // ── Confirm dialog ──
   dialogOverlay: {
     position: "fixed",
     inset: 0,
     zIndex: 1200,
-    background: "rgba(0,0,0,0.7)",
+    background: "rgba(0,0,0,0.4)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1330,167 +1273,106 @@ const s = {
     backdropFilter: "blur(4px)",
   },
   dialog: {
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 20,
-    padding: "32px 28px",
-    maxWidth: 380,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 16,
+    padding: "32px",
+    maxWidth: 400,
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    gap: 12,
+    gap: 16,
     textAlign: "center",
-    animation: "dialogIn 0.25s cubic-bezier(0.16,1,0.3,1)",
-    boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
+    animation: "dialogIn 0.2s ease",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
   },
   dialogIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    background: "rgba(239,68,68,0.1)",
-    border: "1px solid rgba(239,68,68,0.2)",
+    width: 48,
+    height: 48,
+    borderRadius: 50,
+    background: "var(--destructive)",
+    color: "white",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 4,
+    margin: "0 auto",
   },
-  dialogTitle: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: "#f3f4f6",
-    fontFamily: "'Playfair Display', serif",
-  },
-  dialogMsg: { fontSize: 13, color: "#9ca3af", lineHeight: 1.6 },
-  dialogActions: { display: "flex", gap: 10, marginTop: 8, width: "100%" },
+  dialogTitle: { fontSize: 20, fontWeight: 700, color: "var(--foreground)" },
+  dialogMsg: { fontSize: 14, color: "var(--muted-foreground)", lineHeight: 1.5 },
+  dialogActions: { display: "flex", gap: 12, marginTop: 8 },
   dialogCancel: {
     flex: 1,
-    padding: "11px",
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid #1f2937",
-    borderRadius: 10,
-    color: "#9ca3af",
+    padding: "10px",
+    background: "transparent",
+    border: "1px solid var(--border)",
+    borderRadius: 8,
+    color: "var(--foreground)",
     fontSize: 14,
     fontWeight: 600,
     cursor: "pointer",
-    fontFamily: "'DM Sans', sans-serif",
-    transition: "background 0.2s",
   },
   dialogConfirm: {
     flex: 1,
-    padding: "11px",
-    background: "rgba(239,68,68,0.15)",
-    border: "1px solid rgba(239,68,68,0.3)",
-    borderRadius: 10,
-    color: "#f87171",
+    padding: "10px",
+    background: "var(--destructive)",
+    border: "1px solid var(--destructive)",
+    borderRadius: 8,
+    color: "white",
     fontSize: 14,
     fontWeight: 600,
     cursor: "pointer",
-    fontFamily: "'DM Sans', sans-serif",
-    transition: "background 0.2s",
   },
 
-  // ── Product detail modal ──
   detailModal: {
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 22,
-    padding: "28px 28px 24px",
-    maxWidth: 480,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 16,
+    padding: "32px",
+    maxWidth: 540,
     width: "100%",
     position: "relative",
-    animation: "dialogIn 0.28s cubic-bezier(0.16,1,0.3,1)",
-    boxShadow: "0 32px 100px rgba(0,0,0,0.8)",
+    animation: "dialogIn 0.3s ease",
+    boxShadow: "0 30px 60px rgba(0,0,0,0.15)",
     maxHeight: "90vh",
     overflowY: "auto",
   },
   detailClose: {
     position: "absolute",
-    top: 16,
-    right: 16,
+    top: 20,
+    right: 20,
     width: 32,
     height: 32,
-    borderRadius: 8,
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid #1f2937",
-    color: "#6b7280",
+    borderRadius: 6,
+    background: "var(--secondary)",
+    border: "none",
+    color: "var(--foreground)",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
-  detailTop: {
-    display: "flex",
-    gap: 18,
-    alignItems: "flex-start",
-    marginBottom: 20,
-  },
+  detailTop: { display: "flex", gap: 24, marginBottom: 24 },
   detailImg: {
-    width: 88,
-    height: 88,
-    borderRadius: 14,
-    aspectRatio: "1 / 1",
+    width: 100,
+    height: 100,
+    borderRadius: 12,
     objectFit: "cover",
-    border: "1.5px solid #1f2937",
-    flexShrink: 0,
+    border: "1px solid var(--border)",
   },
-  detailImgPlaceholder: {
-    width: 88,
-    height: 88,
-    borderRadius: 14,
-    background: "#1a2233",
-    border: "1.5px dashed #374151",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexShrink: 0,
-  },
-  detailHeadline: { flex: 1, paddingTop: 2 },
-  detailName: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: 20,
-    fontWeight: 700,
-    color: "#f9fafb",
-    lineHeight: 1.3,
-    marginBottom: 4,
-  },
-  detailBrand: { fontSize: 12, color: "#6b7280", marginBottom: 10 },
-  detailFlags: { display: "flex", flexWrap: "wrap", gap: 5 },
-
-  detailDivider: { height: 1, background: "#1f2937", margin: "18px 0" },
-
-  detailGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 },
+  detailHeadline: { flex: 1 },
+  detailName: { fontSize: 24, fontWeight: 800, color: "var(--foreground)", marginBottom: 4, letterSpacing: "-0.02em" },
+  detailBrand: { fontSize: 14, color: "var(--muted-foreground)", marginBottom: 12 },
+  detailDivider: { height: 1, background: "var(--border)", margin: "24px 0" },
+  detailGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 },
   detailField: {
-    background: "#0d1117",
-    border: "1px solid #1f2937",
+    background: "var(--secondary)",
     borderRadius: 10,
-    padding: "12px 14px",
+    padding: "14px",
   },
-  detailFieldLabel: {
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
-    fontSize: 11,
-    fontWeight: 600,
-    color: "#6b7280",
-    textTransform: "uppercase",
-    letterSpacing: "0.06em",
-    marginBottom: 6,
-  },
-  detailFieldIcon: { color: "#4b5563" },
-  detailFieldValue: { fontSize: 14, color: "#d1d5db", fontWeight: 500 },
-
-  detailDescLabel: {
-    fontSize: 11,
-    fontWeight: 600,
-    color: "#6b7280",
-    textTransform: "uppercase",
-    letterSpacing: "0.06em",
-    marginBottom: 8,
-  },
-  detailDesc: { fontSize: 13, color: "#9ca3af", lineHeight: 1.7 },
-
-  detailActions: { display: "flex", gap: 10 },
+  detailFieldLabel: { fontSize: 11, fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 },
+  detailFieldValue: { fontSize: 15, color: "var(--foreground)", fontWeight: 600 },
+  detailDesc: { fontSize: 14, color: "var(--muted-foreground)", lineHeight: 1.6 },
+  detailActions: { display: "flex", gap: 12 },
   detailEditBtn: {
     display: "inline-flex",
     alignItems: "center",

@@ -8,6 +8,7 @@ import {
   Clock,
   Eye,
   PenLine,
+  ShieldAlert,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -28,8 +29,8 @@ function useToast() {
   };
 }
 const TOAST_META = {
-  success: { bg: "#064e3b", color: "#6ee7b7", border: "#065f46", icon: "✓" },
-  error: { bg: "#450a0a", color: "#fca5a5", border: "#7f1d1d", icon: "✕" },
+  success: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "✓" },
+  error: { bg: "var(--background)", color: "var(--destructive)", border: "var(--border)", icon: "✕" },
 };
 function ToastStack({ toasts, onRemove }) {
   if (!toasts.length) return null;
@@ -69,25 +70,17 @@ function ConfirmDialog({ open, onConfirm, onCancel, invoiceId }) {
     <div style={s.dialogOverlay}>
       <div style={s.dialog}>
         <div style={s.dialogIcon}>
-          <AlertTriangle size={24} color="#f87171" />
+          <AlertTriangle size={24} color="white" />
         </div>
         <div style={s.dialogTitle}>Delete Order</div>
         <div style={s.dialogMsg}>
           Are you sure you want to delete order{" "}
-          <strong
-            style={{ color: "#f3f4f6", fontFamily: "'Courier New', monospace" }}
-          >
-            {invoiceId}
-          </strong>
-          ? This cannot be undone.
+          <strong style={{ color: "var(--foreground)" }}>{invoiceId}</strong>?
+          This action cannot be undone.
         </div>
         <div style={s.dialogActions}>
-          <button onClick={onCancel} style={s.dialogCancel}>
-            Cancel
-          </button>
-          <button onClick={onConfirm} style={s.dialogConfirm}>
-            Delete
-          </button>
+          <button onClick={onCancel} style={s.dialogCancel}>Cancel</button>
+          <button onClick={onConfirm} style={s.dialogConfirm}>Delete</button>
         </div>
       </div>
     </div>
@@ -106,36 +99,30 @@ function UpdateStatusDialog({ open, currentStatus, onConfirm, onCancel, invoiceI
   return (
     <div style={s.dialogOverlay}>
       <div style={s.dialog}>
-        <div style={{ ...s.dialogIcon, background: "rgba(99,102,241,0.12)", border: "1px solid rgba(99,102,241,0.2)" }}>
-          <PenLine size={24} color="#818cf8" />
+        <div style={{ ...s.dialogIcon, background: "var(--secondary)", color: "var(--foreground)" }}>
+          <PenLine size={24} />
         </div>
         <div style={s.dialogTitle}>Update Order Status</div>
         <div style={s.dialogMsg}>
           Select a new status for order{" "}
-          <strong style={{ color: "#f3f4f6", fontFamily: "'Courier New', monospace" }}>
-            {invoiceId}
-          </strong>
+          <strong style={{ color: "var(--foreground)" }}>{invoiceId}</strong>
         </div>
         
         <select 
           value={status} 
           onChange={(e) => setStatus(e.target.value)}
-          style={{...s.searchInput, border: "1.5px solid #1f2937", borderRadius: 10, padding: "12px", margin: "14px 0", background: "#0d1117", color: "#f3f4f6", cursor: "pointer"}}
+          style={s.statusSelect}
         >
           <option value="pending">Pending</option>
           <option value="processing">Processing</option>
           <option value="confirmed">Confirmed</option>
           <option value="delivered">Delivered</option>
           <option value="cancelled">Cancelled</option>
-          {/* <option value="returned">Returned</option>
-          <option value="rejected">Rejected</option> */}
         </select>
 
         <div style={s.dialogActions}>
-          <button onClick={onCancel} style={s.dialogCancel}>
-            Cancel
-          </button>
-          <button onClick={() => onConfirm(status)} style={{...s.dialogConfirm, background: "rgba(99,102,241,0.15)", border: "1px solid rgba(99,102,241,0.3)", color: "#818cf8"}}>
+          <button onClick={onCancel} style={s.dialogCancel}>Cancel</button>
+          <button onClick={() => onConfirm(status)} style={s.dialogUpdateBtn}>
             Update
           </button>
         </div>
@@ -178,47 +165,15 @@ function useVirtualList(items, containerRef) {
 
 // ─── Payment badge ────────────────────────────────────────────────────────────
 const PAYMENT_STYLES = {
-  cod: {
-    bg: "rgba(251,191,36,0.12)",
-    color: "#fbbf24",
-    border: "rgba(251,191,36,0.3)",
-    label: "COD",
-  },
-  online: {
-    bg: "rgba(16,185,129,0.12)",
-    color: "#34d399",
-    border: "rgba(16,185,129,0.3)",
-    label: "Online",
-  },
-  card: {
-    bg: "rgba(99,102,241,0.12)",
-    color: "#818cf8",
-    border: "rgba(99,102,241,0.3)",
-    label: "Card",
-  },
+  cod: { bg: "var(--secondary)", color: "var(--foreground)", label: "COD" },
+  online: { bg: "var(--secondary)", color: "var(--success)", label: "Online" },
+  card: { bg: "var(--secondary)", color: "var(--foreground)", label: "Card" },
 };
 function PaymentBadge({ method }) {
   const key = (method || "").toLowerCase();
-  const st = PAYMENT_STYLES[key] || {
-    bg: "rgba(255,255,255,0.06)",
-    color: "#9ca3af",
-    border: "rgba(255,255,255,0.1)",
-    label: method || "—",
-  };
+  const st = PAYMENT_STYLES[key] || { bg: "var(--secondary)", color: "var(--muted-foreground)", label: method || "—" };
   return (
-    <span
-      style={{
-        display: "inline-block",
-        padding: "3px 9px",
-        borderRadius: 20,
-        fontSize: 11,
-        fontWeight: 600,
-        whiteSpace: "nowrap",
-        background: st.bg,
-        color: st.color,
-        border: `1px solid ${st.border}`,
-      }}
-    >
+    <span style={{ ...s.badgeBase, background: st.bg, color: st.color }}>
       {st.label}
     </span>
   );
@@ -226,56 +181,19 @@ function PaymentBadge({ method }) {
 
 // ─── Status badge ─────────────────────────────────────────────────────────────
 const STATUS_STYLES = {
-  pending: {
-    bg: "rgba(245,158,11,0.12)",
-    color: "#f59e0b",
-    border: "rgba(245,158,11,0.3)",
-    label: "Pending",
-  },
-  processing: {
-    bg: "rgba(59,130,246,0.12)",
-    color: "#3b82f6",
-    border: "rgba(59,130,246,0.3)",
-    label: "Processing",
-  },
-  confirmed: {
-    bg: "rgba(99,102,241,0.12)",
-    color: "#818cf8",
-    border: "rgba(99,102,241,0.3)",
-    label: "Confirmed",
-  },
-  delivered: {
-    bg: "rgba(16,185,129,0.12)",
-    color: "#34d399",
-    border: "rgba(16,185,129,0.3)",
-    label: "Delivered",
-  },
-  cancelled: {
-    bg: "rgba(156,163,175,0.12)",
-    color: "#9ca3af",
-    border: "rgba(156,163,175,0.3)",
-    label: "Cancelled",
-  },
-  returned: {
-    bg: "rgba(168,162,158,0.12)",
-    color: "#a8a29e",
-    border: "rgba(168,162,158,0.3)",
-    label: "Returned",
-  },
-  rejected: {
-    bg: "rgba(239,68,68,0.12)",
-    color: "#f87171",
-    border: "rgba(239,68,68,0.3)",
-    label: "Rejected",
-  },
+  pending: { color: "oklch(0.7 0.15 80)", label: "Pending" },
+  processing: { color: "oklch(0.7 0.15 250)", label: "Processing" },
+  confirmed: { color: "var(--foreground)", label: "Confirmed" },
+  delivered: { color: "var(--success)", label: "Delivered" },
+  cancelled: { color: "var(--muted-foreground)", label: "Cancelled" },
+  returned: { color: "var(--muted-foreground)", label: "Returned" },
+  rejected: { color: "var(--destructive)", label: "Rejected" },
 };
 
 function StatusBadge({ status }) {
   const key = (status || "").toLowerCase();
   const st = STATUS_STYLES[key] || {
-    bg: "rgba(255,255,255,0.06)",
-    color: "#9ca3af",
-    border: "rgba(255,255,255,0.1)",
+    color: "var(--muted-foreground)",
     label: status || "Pending",
   };
   return (
@@ -287,9 +205,9 @@ function StatusBadge({ status }) {
         fontSize: 11,
         fontWeight: 600,
         whiteSpace: "nowrap",
-        background: st.bg,
+        background: "var(--secondary)",
         color: st.color,
-        border: `1px solid ${st.border}`,
+        border: `1px solid var(--border)`,
       }}
     >
       {st.label}
@@ -301,8 +219,8 @@ function StatusBadge({ status }) {
 function StatCard({ icon: Icon, label, value, accent }) {
   return (
     <div style={s.statCard}>
-      <div style={{ ...s.statIcon, background: accent + "18", color: accent }}>
-        <Icon size={18} />
+      <div style={{ ...s.statIcon, background: 'var(--secondary)', color: 'var(--foreground)' }}>
+        <Icon size={20} />
       </div>
       <div>
         <div style={s.statValue}>{value}</div>
@@ -330,8 +248,6 @@ function OrderRow({
       <span style={s.itemName}>
         {it.productId?.name ?? it.productId ?? "—"}
       </span>
-      {it.color && <span style={s.itemMeta}>{it.color}</span>}
-      {it.size && <span style={s.itemMeta}>{it.size}</span>}
     </div>
   ));
 
@@ -339,23 +255,22 @@ function OrderRow({
     <tr
       style={{
         ...s.tr,
-        background: isHovered ? "#1a2233" : "transparent",
+        background: isHovered ? "var(--secondary)" : "transparent",
         height: ROW_HEIGHT,
+        cursor: "pointer",
       }}
       onMouseEnter={() => onHover(order._id)}
       onMouseLeave={() => onHover(null)}
+      onClick={() => onView(order)}
     >
-      {/* # */}
       <td style={s.td}>
         <span style={s.indexBadge}>{index + 1}</span>
       </td>
 
-      {/* Invoice */}
       <td style={s.td}>
-        <span style={s.monoText}>{order.invoiceId || "—"}</span>
+        <span style={s.invoiceId}>{order.invoiceId || "—"}</span>
       </td>
 
-      {/* Customer */}
       <td style={s.td}>
         <div style={s.nameCell}>
           <span style={s.customerName}>{order.customer?.fullName || "—"}</span>
@@ -363,22 +278,18 @@ function OrderRow({
         </div>
       </td>
 
-      {/* Address */}
       <td style={s.td}>
         <span style={s.addressText}>{order.customer?.address || "—"}</span>
       </td>
 
-      {/* Payment */}
       <td style={s.td}>
         <PaymentBadge method={order.paymentMethod} />
       </td>
 
-      {/* Status */}
       <td style={s.td}>
         <StatusBadge status={order.status} />
       </td>
 
-      {/* Items */}
       <td style={s.td}>
         <div style={s.itemsCell}>
           {itemSummary}
@@ -388,44 +299,53 @@ function OrderRow({
         </div>
       </td>
 
-      {/* Note */}
       <td style={s.td}>
         <span style={s.noteText}>{order.note || "—"}</span>
       </td>
 
-      {/* Actions */}
       <td style={{ ...s.td, textAlign: "center" }}>
         <div style={s.actionsCell}>
           <button
-            style={{ ...s.viewBtn, ...(isHovered ? s.viewBtnHover : {}) }}
-            onClick={() => onView(order)}
-            title="View order details"
+            style={s.viewBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onView(order);
+            }}
+            title="View Details"
           >
             <Eye size={14} />
           </button>
           <button
-            style={{ ...s.viewBtn, ...(isHovered ? s.viewBtnHover : {}) }}
-            onClick={() => navigate(`/fraud-checker?phone=${order.customer?.phone}`)}
-            title="Check Fraud History"
+            style={s.fraudBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/fraud-checker?phone=${order.customer?.phone}`);
+            }}
+            title="Fraud Check"
           >
-            <ShieldAlert size={14} color="#f87171" />
+            <ShieldAlert size={14} />
           </button>
           <button
-            style={{ ...s.viewBtn, ...(isHovered ? s.viewBtnHover : {}) }}
-            onClick={() => onUpdateStatus(order)}
-            title="Update order status"
+            style={s.editBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdateStatus(order);
+            }}
+            title="Update Status"
           >
-            <PenLine size={14} color="#818cf8" />
+            <PenLine size={14} />
           </button>
           <button
             style={{
               ...s.deleteBtn,
-              ...(isHovered ? s.deleteBtnHover : {}),
               ...(isDeleting ? s.btnDisabled : {}),
             }}
-            onClick={() => onDelete(order)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(order);
+            }}
             disabled={isDeleting}
-            title="Delete order"
+            title="Delete Order"
           >
             <Trash2 size={14} />
           </button>
@@ -589,30 +509,26 @@ export default function OrderList() {
       </div>
 
       {/* ── Stat Cards ── */}
-      <div className="ol-stats">
+    <div className="ol-stats">
         <StatCard
           icon={ShoppingBag}
           label="Total Orders"
           value={orders.length}
-          accent="#d97706"
         />
         <StatCard
           icon={Clock}
           label="Total Items"
           value={totalItems}
-          accent="#818cf8"
         />
         <StatCard
           icon={Users}
           label="Unique Customers"
           value={uniqueCustomers}
-          accent="#34d399"
         />
         <StatCard
           icon={CreditCard}
           label="COD Orders"
           value={codOrders}
-          accent="#f87171"
         />
       </div>
 
@@ -785,76 +701,83 @@ export default function OrderList() {
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
-
   @keyframes spin       { to { transform: rotate(360deg); } }
   @keyframes fadeIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes slideUp    { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes toastSlide { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
-  @keyframes dialogIn   { from { opacity:0; transform:scale(0.95) translateY(8px); } to { opacity:1; transform:scale(1) translateY(0); } }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; }
-  ::-webkit-scrollbar       { width:6px; height:6px; }
-  ::-webkit-scrollbar-track { background:#0d0d0d; }
-  ::-webkit-scrollbar-thumb { background:#1f2937; border-radius:3px; }
-
-  .ol-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px; font-weight: 700;
-    margin: 0 0 4px; color: #f9fafb;
-    letter-spacing: -0.02em;
-  }
   .ol-header {
-    display: flex; justify-content: space-between;
-    align-items: flex-start; margin-bottom: 28px;
-    flex-wrap: wrap; gap: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
   }
+  .ol-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--foreground);
+    margin: 0 0 4px 0;
+  }
+
   .ol-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px; margin-bottom: 28px;
-  }
-  .ol-card-header {
-    display: flex; justify-content: space-between;
-    align-items: center; flex-wrap: wrap;
-    gap: 14px; padding: 20px 24px;
-    border-bottom: 1px solid #1f2937;
-  }
-  .ol-search-wrap {
-    display: flex; align-items: center; gap: 8px;
-    background: #0d1117; border: 1.5px solid #1f2937;
-    border-radius: 10px; padding: 8px 14px; min-width: 280px;
-  }
-  .ol-table-footer {
-    padding: 14px 24px; border-top: 1px solid #1f2937;
-    font-size: 12px; color: #4b5563; text-align: right;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
   }
 
-  @media (max-width: 900px) {
-    .ol-stats { grid-template-columns: repeat(2, 1fr); }
-    .ol-card-header { flex-direction: column; align-items: flex-start; padding: 16px 18px; }
-    .ol-search-wrap { width: 100%; min-width: unset; }
+  .ol-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
   }
-  @media (max-width: 600px) {
-    .ol-title { font-size: 21px; }
-    .ol-header { margin-bottom: 18px; }
-    .ol-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
-    .ol-card-header { padding: 14px; }
-    .ol-table-footer { text-align: center; padding: 12px 14px; }
+  .ol-search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    width: 320px;
+    transition: all 0.2s;
   }
-  @media (max-width: 420px) {
-    .ol-title { font-size: 18px; }
-    .ol-stats { grid-template-columns: 1fr 1fr; }
+  .ol-search-wrap:focus-within {
+    border-color: var(--foreground);
+    box-shadow: 0 0 0 2px var(--secondary);
+  }
+
+  .ol-table-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted-foreground);
+    text-align: right;
+  }
+
+  @keyframes spin       { to { transform: rotate(360deg); } }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes toastSlide {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes dialogIn {
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
   }
 `;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: {
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#e5e7eb",
-    padding: "32px 24px 80px",
-    animation: "fadeIn 0.35s ease",
+  page: { 
+    maxWidth: 1200, 
+    margin: "0 auto",
+    fontFamily: "'Inter', sans-serif"
   },
   centerState: {
     display: "flex",
@@ -865,39 +788,39 @@ const s = {
     gap: 16,
   },
   spinner: {
-    width: 40,
-    height: 40,
-    border: "3px solid #1f2937",
-    borderTop: "3px solid #d97706",
+    width: 32,
+    height: 32,
+    border: "3px solid var(--secondary)",
+    borderTop: "3px solid var(--foreground)",
     borderRadius: "50%",
     animation: "spin 0.8s linear infinite",
   },
-  stateText: { color: "#6b7280", fontSize: 14 },
+  stateText: { color: "var(--muted-foreground)", fontSize: 14 },
 
   breadcrumb: {
     display: "flex",
-    gap: 6,
+    gap: 8,
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: 8,
   },
-  breadcrumbLink: { color: "#6b7280", fontSize: 13, cursor: "pointer" },
-  breadcrumbSep: { color: "#374151" },
-  breadcrumbCurrent: { color: "#d97706", fontSize: 13 },
-  titleSub: { fontSize: 13, color: "#6b7280", margin: 0 },
+  breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
+  breadcrumbSep: { color: "var(--border)", fontSize: 12 },
+  breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0, fontWeight: 400 },
 
   statCard: {
     display: "flex",
     alignItems: "center",
-    gap: 14,
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 14,
-    padding: "16px 20px",
+    gap: 16,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    padding: "20px 24px",
     animation: "slideUp 0.4s ease",
   },
   statIcon: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: 10,
     display: "flex",
     alignItems: "center",
@@ -905,49 +828,50 @@ const s = {
     flexShrink: 0,
   },
   statValue: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#f9fafb",
+    fontSize: 24,
+    fontWeight: 800,
+    color: "var(--foreground)",
     lineHeight: 1,
+    letterSpacing: "-0.02em",
   },
-  statLabel: { fontSize: 12, color: "#6b7280", marginTop: 3 },
+  statLabel: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 4, fontWeight: 500 },
 
   card: {
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 18,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
     overflow: "hidden",
     animation: "slideUp 0.45s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
   },
   cardTitleWrap: { display: "flex", alignItems: "center", gap: 14 },
   cardIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    background: "rgba(217,119,6,0.12)",
-    color: "#d97706",
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    background: "var(--secondary)",
+    color: "var(--foreground)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
-  cardTitle: { fontSize: 15, fontWeight: 600, color: "#f3f4f6" },
-  cardSubtitle: { fontSize: 12, color: "#6b7280", marginTop: 2 },
+  cardTitle: { fontSize: 16, fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.01em" },
+  cardSubtitle: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 3 },
 
-  searchIcon: { fontSize: 13, flexShrink: 0 },
+  searchIcon: { fontSize: 14, opacity: 0.5 },
   searchInput: {
     background: "none",
     border: "none",
     outline: "none",
-    color: "#f3f4f6",
-    fontSize: 13,
-    fontFamily: "'DM Sans', sans-serif",
+    color: "var(--foreground)",
+    fontSize: 14,
     width: "100%",
+    fontWeight: 500,
   },
   searchClear: {
     background: "none",
     border: "none",
-    color: "#6b7280",
+    color: "var(--muted-foreground)",
     fontSize: 18,
     cursor: "pointer",
     padding: 0,
@@ -955,180 +879,145 @@ const s = {
     flexShrink: 0,
   },
 
-  tableOuterWrap: { overflowX: "auto", WebkitOverflowScrolling: "touch" },
+  tableOuterWrap: { overflowX: "auto" },
   tableHeaderWrap: {
     position: "sticky",
     top: 0,
     zIndex: 2,
-    background: "#0d1117",
-    borderBottom: "1px solid #1f2937",
-    overflowX: "hidden",
+    background: "var(--background)",
+    borderBottom: "1px solid var(--border)",
   },
   tableScrollBody: {
     overflowY: "auto",
-    WebkitOverflowScrolling: "touch",
-    minWidth: 780,
+    minWidth: 1000,
   },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: 780 },
+  table: { width: "100%", borderCollapse: "collapse" },
 
   th: {
-    padding: "12px 14px",
-    fontSize: 11,
+    padding: "14px 16px",
+    fontSize: 12,
     fontWeight: 600,
-    color: "#6b7280",
+    color: "var(--muted-foreground)",
     textTransform: "uppercase",
-    letterSpacing: "0.07em",
-    background: "#0d1117",
-    whiteSpace: "nowrap",
+    letterSpacing: "0.05em",
+    textAlign: "left",
   },
-  sortArrow: { color: "#d97706" },
+  sortArrow: { color: "var(--foreground)", fontStyle: "normal" },
 
   tr: {
-    borderBottom: "1px solid #1a2233",
-    transition: "background 0.12s ease",
+    borderBottom: "1px solid var(--border)",
+    transition: "background 0.2s ease",
   },
   td: {
-    padding: "0 14px",
-    fontSize: 13,
-    color: "#d1d5db",
+    padding: "0 16px",
+    fontSize: 14,
+    color: "var(--foreground)",
     verticalAlign: "middle",
-    height: ROW_HEIGHT,
   },
 
   indexBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 26,
-    height: 26,
-    background: "#1f2937",
-    borderRadius: 7,
     fontSize: 12,
     fontWeight: 600,
-    color: "#9ca3af",
+    color: "var(--muted-foreground)",
   },
-
-  monoText: {
-    fontFamily: "'Courier New', monospace",
-    fontSize: 11,
-    color: "#9ca3af",
-    letterSpacing: "0.03em",
-  },
-
-  nameCell: { display: "flex", flexDirection: "column", gap: 2 },
-  customerName: {
+  invoiceId: {
     fontSize: 13,
     fontWeight: 600,
-    color: "#f3f4f6",
-    lineHeight: 1.3,
-  },
-  customerPhone: { fontSize: 11, color: "#6b7280" },
-
-  addressText: {
-    fontSize: 12,
-    color: "#9ca3af",
-    lineHeight: 1.4,
-    display: "-webkit-box",
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
+    color: "var(--foreground)",
   },
 
-  itemsCell: { display: "flex", flexDirection: "column", gap: 3 },
-  itemLine: { display: "flex", alignItems: "center", gap: 5, flexWrap: "wrap" },
-  itemQty: { fontSize: 11, fontWeight: 700, color: "#d97706", flexShrink: 0 },
-  itemName: {
+  nameCell: { display: "flex", flexDirection: "column", gap: 1 },
+  customerName: { fontSize: 14, fontWeight: 600, color: "var(--foreground)", lineHeight: 1.4 },
+  customerPhone: { fontSize: 12, color: "var(--muted-foreground)" },
+
+  addressText: { fontSize: 13, color: "var(--muted-foreground)", lineHeight: 1.4 },
+  itemsCell: { display: "flex", flexDirection: "column", gap: 4 },
+  itemLine: { fontSize: 12, color: "var(--foreground)" },
+  itemQty: { fontWeight: 700, marginRight: 4 },
+  itemName: { color: "var(--muted-foreground)" },
+  moreItems: { fontSize: 11, fontWeight: 700, color: "var(--muted-foreground)" },
+  noteText: { fontSize: 12, color: "var(--muted-foreground)", fontStyle: "italic" },
+
+  badgeBase: {
+    display: "inline-block",
+    padding: "2px 10px",
+    borderRadius: 6,
     fontSize: 11,
-    color: "#9ca3af",
-    fontFamily: "'Courier New', monospace",
-  },
-  itemMeta: {
-    fontSize: 10,
-    color: "#6b7280",
-    background: "#1f2937",
-    borderRadius: 4,
-    padding: "1px 5px",
-  },
-  moreItems: { fontSize: 10, color: "#6b7280", marginTop: 1 },
-
-  noteText: {
-    fontSize: 12,
-    color: "#6b7280",
-    display: "-webkit-box",
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
+    fontWeight: 700,
+    whiteSpace: "nowrap",
   },
 
   actionsCell: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: 4,
   },
 
   viewBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    background: "rgba(99,102,241,0.1)",
-    border: "1px solid rgba(99,102,241,0.25)",
-    color: "#818cf8",
-    cursor: "pointer",
-    transition: "background 0.2s, transform 0.15s",
-  },
-  viewBtnHover: {
-    background: "rgba(99,102,241,0.2)",
-    transform: "scale(1.08)",
-  },
-
-  deleteBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    background: "rgba(239,68,68,0.1)",
-    border: "1px solid rgba(239,68,68,0.25)",
-    color: "#f87171",
-    cursor: "pointer",
-    transition: "background 0.2s, transform 0.15s",
-  },
-  deleteBtnHover: {
-    background: "rgba(239,68,68,0.2)",
-    transform: "scale(1.08)",
-  },
-  btnDisabled: { opacity: 0.45, cursor: "not-allowed", transform: "none" },
-
-  emptyState: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--muted-foreground)",
     display: "flex",
-    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
-    height: "100%",
-    padding: "60px 24px",
+    cursor: "pointer",
+    transition: "all 0.2s",
   },
-  emptyTitle: { fontSize: 15, fontWeight: 600, color: "#9ca3af", margin: 0 },
-  emptyHint: { fontSize: 12, color: "#4b5563", margin: 0, textAlign: "center" },
+  fraudBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--destructive)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+  editBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--success)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+  deleteBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    border: "1px solid var(--border)",
+    background: "transparent",
+    color: "var(--destructive)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+  btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
 
-  footerVirt: { color: "#374151", marginLeft: 8, fontStyle: "italic" },
-
-  // ── Dialog ──
   dialogOverlay: {
     position: "fixed",
     inset: 0,
     zIndex: 1200,
-    background: "rgba(0,0,0,0.7)",
-    backdropFilter: "blur(4px)",
+    background: "rgba(0,0,0,0.4)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+    backdropFilter: "blur(4px)",
   },
   dialog: {
     background: "#111827",

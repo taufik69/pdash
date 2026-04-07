@@ -20,8 +20,8 @@ function useToast() {
 }
 
 const TOAST_META = {
-  success: { bg: "#064e3b", color: "#6ee7b7", border: "#065f46", icon: "✓" },
-  error: { bg: "#450a0a", color: "#fca5a5", border: "#7f1d1d", icon: "✕" },
+  success: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "✓" },
+  error: { bg: "var(--background)", color: "var(--destructive)", border: "var(--border)", icon: "✕" },
 };
 
 function ToastStack({ toasts, onRemove }) {
@@ -306,53 +306,68 @@ export default function EditBanner() {
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
   @keyframes slideUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes toastSlide { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  .ac-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; gap: 16px; }
+  .ac-title { font-size: 32px; font-weight: 800; color: var(--foreground); letter-spacing: -0.03em; margin: 0; }
+  .ac-card-header { display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid var(--border); }
+  .ac-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; }
+  
+  @media (max-width: 860px) {
+    .ac-grid { grid-template-columns: 1fr; gap: 24px; }
+  }
 `;
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: { fontFamily: "'DM Sans', sans-serif", color: "#e5e7eb", padding: "32px 24px 80px", animation: "fadeIn 0.35s ease" },
+  page: { 
+    maxWidth: 1000, 
+    margin: "0 auto", 
+    fontFamily: "'Inter', sans-serif", 
+    color: "var(--foreground)", 
+    padding: "32px 24px 80px", 
+    animation: "fadeIn 0.4s ease" 
+  },
   centerState: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "50vh", gap: 16 },
-  spinner: { width: 32, height: 32, border: "3px solid #1f2937", borderTopColor: "#d97706", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
-  stateText: { color: "#6b7280", fontSize: 13 },
-  breadcrumb: { display: "flex", gap: 6, alignItems: "center", marginBottom: 6 },
-  breadcrumbLink: { color: "#6b7280", fontSize: 13, cursor: "pointer" },
-  breadcrumbSep: { color: "#374151" },
-  breadcrumbCurrent: { color: "#d97706", fontSize: 13 },
-  ac_header: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 },
-  ac_title: { fontFamily: "'Playfair Display', serif", fontSize: 28, margin: 0, color: "#f9fafb" },
-  titleSub: { fontSize: 13, color: "#6b7280", margin: "4px 0 0" },
-  btnBack: { display: "flex", alignItems: "center", gap: 6, background: "none", border: "1px solid #1f2937", color: "#6b7280", padding: "8px 14px", borderRadius: 9, fontSize: 12, cursor: "pointer" },
-  card: { background: "#111827", border: "1px solid #1f2937", borderRadius: 18, overflow: "hidden", animation: "slideUp 0.4s ease" },
-  cardTitleWrap: { display: "flex", alignItems: "center", gap: 14 },
-  cardIcon: { width: 38, height: 38, borderRadius: 10, background: "rgba(217,119,6,0.12)", color: "#d97706", display: "flex", alignItems: "center", justifyContent: "center" },
-  cardTitle: { fontSize: 14, fontWeight: 600, color: "#f3f4f6" },
-  cardSubtitle: { fontSize: 11, color: "#6b7280", marginTop: 2 },
-  formBody: { padding: "28px 24px" },
-  ac_grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32 },
+  spinner: { width: 40, height: 40, border: "3px solid var(--border)", borderTop: "3px solid var(--foreground)", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
+  stateText: { color: "var(--muted-foreground)", fontSize: 14, fontWeight: 500 },
+  breadcrumb: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8 },
+  breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
+  breadcrumbSep: { color: "var(--border)", fontSize: 12 },
+  breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0 },
+  btnBack: { display: "flex", alignItems: "center", gap: 8, background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)", padding: "10px 16px", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" },
+  card: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", animation: "slideUp 0.45s ease", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" },
+  cardTitleWrap: { display: "flex", alignItems: "center", gap: 16 },
+  cardIcon: { width: 40, height: 40, borderRadius: 10, background: "var(--secondary)", color: "var(--foreground)", display: "flex", alignItems: "center", justifyContent: "center" },
+  cardTitle: { fontSize: 16, fontWeight: 700, color: "var(--foreground)" },
+  cardSubtitle: { fontSize: 13, color: "var(--muted-foreground)" },
+  formBody: { padding: "32px" },
   col: { display: "flex", flexDirection: "column", gap: 24 },
-  fieldGroup: { display: "flex", flexDirection: "column", gap: 8 },
-  label: { fontSize: 11, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.06em" },
-  input: { width: "100%", background: "#0d1117", border: "1.5px solid #1f2937", borderRadius: 10, padding: "11px 14px", color: "#f3f4f6", fontSize: 14, outline: "none" },
-  inputError: { borderColor: "rgba(239,68,68,0.4)" },
-  errorMsg: { fontSize: 11, color: "#f87171", margin: 0 },
-  toggleWrap: { display: "flex", alignItems: "center", gap: 12, marginTop: 4 },
-  checkbox: { width: 18, height: 18, accentColor: "#d97706", cursor: "pointer" },
-  toggleLabel: { fontSize: 14, color: "#9ca3af", cursor: "pointer" },
-  previewWrap: { display: "flex", gap: 16, alignItems: "flex-start", background: "#0d1117", border: "1.5px solid #1f2937", borderRadius: 12, padding: 14 },
-  previewImg: { width: 130, height: 74, objectFit: "cover", borderRadius: 7 },
-  previewInfo: { display: "flex", flexDirection: "column", gap: 6, flex: 1 },
-  previewName: { fontSize: 12, fontWeight: 600, color: "#f3f4f6", wordBreak: "break-all" },
-  changeBtn: { background: "rgba(217,119,6,0.1)", border: "1px solid rgba(217,119,6,0.2)", color: "#d97706", borderRadius: 6, padding: "5px 12px", fontSize: 11, cursor: "pointer", width: "fit-content" },
-  resetBtn: { background: "none", border: "none", color: "#6b7280", padding: 0, fontSize: 10, cursor: "pointer", width: "fit-content", textDecoration: "underline" },
-  formFooter: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderTop: "1px solid #1f2937" },
-  footerHint: { fontSize: 11, color: "#4b5563" },
-  submitBtn: { background: "#d97706", color: "#fff", border: "none", borderRadius: 9, padding: "11px 24px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
+  fieldGroup: { display: "flex", flexDirection: "column", gap: 12 },
+  label: { fontSize: 11, fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" },
+  required: { color: "var(--destructive)" },
+  input: { width: "100%", background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "var(--foreground)", outline: "none", transition: "border-color 0.2s", fontWeight: 500 },
+  inputError: { borderColor: "var(--destructive)" },
+  errorMsg: { fontSize: 12, color: "var(--destructive)", margin: 0, fontWeight: 500 },
+  toggleWrap: { display: "flex", alignItems: "center", gap: 12, background: "var(--secondary)", padding: "12px 16px", borderRadius: 10, border: "1px solid var(--border)", cursor: "pointer" },
+  checkbox: { width: 18, height: 18, accentColor: "var(--foreground)", cursor: "pointer" },
+  toggleLabel: { fontSize: 14, fontWeight: 600, color: "var(--foreground)", cursor: "pointer" },
+  previewWrap: { display: "flex", flexDirection: "column", gap: 16, alignItems: "center", justifyContent: "center", background: "var(--secondary)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, minHeight: 220 },
+  previewImg: { width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" },
+  previewInfo: { display: "flex", flexDirection: "column", gap: 8, alignItems: "center", textAlign: "center" },
+  previewName: { fontSize: 13, fontWeight: 600, color: "var(--foreground)", maxWidth: 300, overflow: "hidden", textOverflow: "ellipsis" },
+  changeBtn: { background: "var(--primary)", color: "var(--primary-foreground)", border: "none", borderRadius: 8, padding: "8px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" },
+  resetBtn: { background: "none", border: "none", color: "var(--muted-foreground)", padding: 0, fontSize: 12, cursor: "pointer", fontWeight: 600, textDecoration: "underline" },
+  formFooter: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "24px", borderTop: "1px solid var(--border)", background: "var(--background)" },
+  footerHint: { fontSize: 13, color: "var(--muted-foreground)" },
+  submitBtn: { background: "var(--foreground)", color: "var(--background)", border: "none", borderRadius: 10, padding: "12px 32px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" },
   submitDisabled: { opacity: 0.5, cursor: "not-allowed" },
-  cancelBtn: { background: "none", border: "1px solid #1f2937", color: "#6b7280", padding: "11px 24px", borderRadius: 9, fontSize: 13, cursor: "pointer" },
-  toastStack: { position: "fixed", top: 20, right: 20, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10 },
-  toast: { display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 10, border: "1px solid", fontSize: 13 },
+  cancelBtn: { background: "var(--secondary)", border: "1px solid var(--border)", color: "var(--foreground)", padding: "12px 24px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer" },
+  toastStack: { position: "fixed", top: 24, right: 24, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10, maxWidth: 360 },
+  toast: { display: "flex", alignItems: "center", gap: 12, padding: "14px 20px", borderRadius: 10, border: "1px solid var(--border)", fontSize: 14, fontWeight: 600, boxShadow: "0 10px 40px rgba(0,0,0,0.1)", animation: "toastSlide 0.3s ease" },
 };

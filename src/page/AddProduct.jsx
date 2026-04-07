@@ -20,9 +20,9 @@ function useToast() {
 }
 
 const TOAST_META = {
-  success: { bg: "#064e3b", color: "#6ee7b7", border: "#065f46", icon: "✓" },
-  error: { bg: "#450a0a", color: "#fca5a5", border: "#7f1d1d", icon: "✕" },
-  info: { bg: "#0c1a3a", color: "#93c5fd", border: "#1e3a6e", icon: "i" },
+  success: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "✓" },
+  error: { bg: "var(--background)", color: "var(--destructive)", border: "var(--border)", icon: "✕" },
+  info: { bg: "var(--background)", color: "var(--muted-foreground)", border: "var(--border)", icon: "i" },
 };
 
 function ToastStack({ toasts, onRemove }) {
@@ -65,7 +65,7 @@ function Field({ label, error, hint, children }) {
     <div style={s.fieldGroup}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <label style={s.label}>
-          {cleanLabel} {isRequired && <span style={{ color: "#ef4444", fontSize: "14px", marginLeft: "2px" }}>*</span>}
+          {cleanLabel} {isRequired && <span style={{ color: "var(--destructive)", fontSize: "14px", marginLeft: "2px" }}>*</span>}
         </label>
         {hint && <span style={s.hint}>{hint}</span>}
       </div>
@@ -77,12 +77,12 @@ function Field({ label, error, hint, children }) {
 
 // ─── Flag config ──────────────────────────────────────────────────────────────
 const FLAGS = [
-  { key: "isNew", label: "New", color: "#34d399", bg: "rgba(16,185,129,0.12)", border: "rgba(16,185,129,0.25)" },
-  { key: "isSale", label: "Sale", color: "#f87171", bg: "rgba(239,68,68,0.12)", border: "rgba(239,68,68,0.25)" },
-  { key: "isLimited", label: "Limited", color: "#fbbf24", bg: "rgba(251,191,36,0.12)", border: "rgba(251,191,36,0.25)" },
-  { key: "isHot", label: "Hot", color: "#fb923c", bg: "rgba(251,146,60,0.12)", border: "rgba(251,146,60,0.25)" },
-  { key: "isFeatured", label: "Featured", color: "#818cf8", bg: "rgba(99,102,241,0.12)", border: "rgba(99,102,241,0.25)" },
-  { key: "isBestSelling", label: "Best Selling", color: "#fbbf24", bg: "rgba(217,119,6,0.12)", border: "rgba(217,119,6,0.25)" },
+  { key: "isNew", label: "New", color: "var(--foreground)", bg: "var(--secondary)", border: "var(--border)" },
+  { key: "isSale", label: "Sale", color: "var(--foreground)", bg: "var(--secondary)", border: "var(--border)" },
+  { key: "isLimited", label: "Limited", color: "var(--foreground)", bg: "var(--secondary)", border: "var(--border)" },
+  { key: "isHot", label: "Hot", color: "var(--foreground)", bg: "var(--secondary)", border: "var(--border)" },
+  { key: "isFeatured", label: "Featured", color: "var(--foreground)", bg: "var(--secondary)", border: "var(--border)" },
+  { key: "isBestSelling", label: "Best Selling", color: "var(--foreground)", bg: "var(--secondary)", border: "var(--border)" },
 ];
 
 function SectionCard({ title, subtitle, children }) {
@@ -349,7 +349,7 @@ export default function AddProduct() {
           <div style={{ marginBottom: 16 }}>
             <label style={s.flagLabel} className="ap-flag">
               <input type="checkbox" name="hasVariants" checked={formData.hasVariants} onChange={handleCheckbox} style={{ display: "none" }} />
-              <span style={{ ...s.flagDot, background: formData.hasVariants ? "#d97706" : "#374151" }} />
+              <span style={{ ...s.flagDot, background: formData.hasVariants ? "var(--foreground)" : "var(--border)" }} />
               This product has multiple variants (e.g. different colors & sizes)
             </label>
           </div>
@@ -405,7 +405,7 @@ export default function AddProduct() {
               {formData.color && (
                 <div style={s.tagRow}>
                   {formData.color.split(",").map((c) => c.trim()).filter(Boolean).map((c, i) => (
-                      <span key={i} style={{ ...s.tag, background: "rgba(16,185,129,0.1)", color: "#34d399", border: "1px solid rgba(16,185,129,0.25)" }}>{c}</span>
+                      <span key={i} style={s.tag}>{c}</span>
                   ))}
                 </div>
               )}
@@ -415,7 +415,7 @@ export default function AddProduct() {
               {formData.size && (
                 <div style={s.tagRow}>
                   {formData.size.split(",").map((sz) => sz.trim()).filter(Boolean).map((sz, i) => (
-                      <span key={i} style={{ ...s.tag, background: "rgba(129,140,248,0.1)", color: "#818cf8", border: "1px solid rgba(129,140,248,0.25)" }}>{sz}</span>
+                      <span key={i} style={s.tag}>{sz}</span>
                   ))}
                 </div>
               )}
@@ -458,8 +458,8 @@ export default function AddProduct() {
               onDrop={(e) => { e.preventDefault(); setDragOver(false); applyImages(e.dataTransfer.files); }}
               onClick={() => fileInputRef.current?.click()}
             >
-              <div style={s.dropIcon}><ImagePlus size={24} color="#d97706" /></div>
-              <p style={s.dropText}><strong style={{ color: "#d97706" }}>Click to upload</strong> or drag & drop</p>
+              <div style={s.dropIcon}><ImagePlus size={24} color="var(--foreground)" /></div>
+              <p style={s.dropText}><strong>Click to upload</strong> or drag & drop</p>
               <p style={s.dropHint}>JPG, PNG, WEBP — multiple files allowed</p>
             </div>
           ) : (
@@ -496,107 +496,235 @@ export default function AddProduct() {
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
   @keyframes slideUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes toastSlide { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes toastSlide { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
   *, *::before, *::after { box-sizing: border-box; }
 
-  .ap-title { font-family: 'Playfair Display', serif; font-size: 30px; font-weight: 700; margin: 0 0 4px; color: #f9fafb; letter-spacing: -0.02em; }
-  .ap-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+  .ap-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+  .ap-title { font-size: 32px; font-weight: 800; color: var(--foreground); letter-spacing: -0.03em; margin: 0; }
 
-  .ap-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  .ap-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .ap-grid-flags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .ap-image-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .ap-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .ap-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .ap-grid-flags { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .ap-image-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; }
 
-  .ap-flag { cursor: pointer; transition: all 0.18s ease; }
-  .ap-flag:hover { border-color: rgba(217,119,6,0.4) !important; background: rgba(217,119,6,0.06) !important; }
-  .ap-submit-btn:hover:not(:disabled) { opacity: 0.88; }
+  .ap-flag { cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border); }
+  .ap-flag:hover { border-color: var(--foreground); }
 
-  @media (max-width: 860px) {
-    .ap-grid-3 { grid-template-columns: repeat(2, 1fr); }
-    .ap-grid-flags { grid-template-columns: repeat(2, 1fr); }
-    .ap-image-grid { grid-template-columns: repeat(3, 1fr); }
+  .ap-submit-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--primary); color: var(--primary-foreground);
+    border: none; borderRadius: 10px; padding: 12px 32px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s ease;
   }
-  @media (max-width: 640px) {
-    .ap-title { font-size: 22px; }
-    .ap-grid-2 { grid-template-columns: 1fr; }
-    .ap-grid-3 { grid-template-columns: 1fr; }
-    .ap-grid-flags { grid-template-columns: repeat(2, 1fr); }
-    .ap-image-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 420px) {
-    .ap-title { font-size: 18px; }
-    .ap-grid-flags { grid-template-columns: 1fr 1fr; }
-    .ap-image-grid { grid-template-columns: repeat(2, 1fr); }
+  .ap-submit-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+  .ap-submit-btn:active:not(:disabled) { transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .ap-grid-2, .ap-grid-3 { grid-template-columns: 1fr; }
   }
 `;
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: { fontFamily: "'DM Sans', sans-serif", color: "#e5e7eb", padding: "32px 24px 80px", animation: "fadeIn 0.35s ease" },
-  breadcrumb: { display: "flex", gap: 6, alignItems: "center", marginBottom: 6 },
-  breadcrumbLink: { color: "#6b7280", fontSize: 13, cursor: "pointer" },
-  breadcrumbSep: { color: "#374151" },
-  breadcrumbCurrent: { color: "#d97706", fontSize: 13 },
-  titleSub: { fontSize: 13, color: "#6b7280", margin: 0 },
+  page: { 
+    maxWidth: 1000, 
+    margin: "0 auto", 
+    fontFamily: "'Inter', sans-serif", 
+    color: "var(--foreground)", 
+    padding: "32px 24px 80px", 
+    animation: "fadeIn 0.4s ease" 
+  },
+  breadcrumb: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8 },
+  breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
+  breadcrumbSep: { color: "var(--border)", fontSize: 12 },
+  breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0 },
 
-  sectionCard: { background: "#111827", border: "1px solid #1f2937", borderRadius: 18, overflow: "hidden", animation: "slideUp 0.4s ease" },
-  sectionHeader: { padding: "18px 24px", borderBottom: "1px solid #1f2937", display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" },
-  sectionTitle: { fontSize: 14, fontWeight: 600, color: "#f3f4f6" },
-  sectionSubtitle: { fontSize: 12, color: "#6b7280" },
+  sectionCard: { 
+    background: "var(--background)", 
+    border: "1px solid var(--border)", 
+    borderRadius: 12, 
+    overflow: "hidden", 
+    animation: "slideUp 0.45s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+  },
+  sectionHeader: { 
+    padding: "20px 24px", 
+    borderBottom: "1px solid var(--border)", 
+    display: "flex", 
+    flexDirection: "column",
+    gap: 4
+  },
+  sectionTitle: { fontSize: 16, fontWeight: 700, color: "var(--foreground)" },
+  sectionSubtitle: { fontSize: 13, color: "var(--muted-foreground)" },
   sectionBody: { padding: "24px" },
 
   fieldGroup: { display: "flex", flexDirection: "column", gap: 8 },
-  label: { fontSize: 11, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.07em" },
-  hint: { fontSize: 11, color: "#9ca3af", fontWeight: 500, fontStyle: "italic", textTransform: "none", letterSpacing: "normal" },
-  errorMsg: { fontSize: 12, color: "#f87171", margin: 0 },
+  label: { fontSize: 11, fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" },
+  hint: { fontSize: 11, color: "var(--muted-foreground)", fontStyle: "italic" },
+  errorMsg: { fontSize: 12, color: "var(--destructive)", margin: 0, fontWeight: 500 },
 
-  input: { width: "100%", background: "#0d1117", border: "1.5px solid #1f2937", borderRadius: 10, padding: "11px 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#f3f4f6", outline: "none", transition: "border-color 0.2s" },
-  textarea: { width: "100%", background: "#0d1117", border: "1.5px solid #1f2937", borderRadius: 10, padding: "11px 14px", fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#f3f4f6", outline: "none", resize: "vertical", lineHeight: 1.6, transition: "border-color 0.2s" },
-  inputError: { borderColor: "rgba(239,68,68,0.5)" },
+  input: { 
+    width: "100%", 
+    background: "var(--background)", 
+    border: "1px solid var(--border)", 
+    borderRadius: 8, 
+    padding: "10px 14px", 
+    fontSize: 14, 
+    color: "var(--foreground)", 
+    outline: "none", 
+    transition: "border-color 0.2s",
+    fontWeight: 500
+  },
+  textarea: { 
+    width: "100%", 
+    background: "var(--background)", 
+    border: "1px solid var(--border)", 
+    borderRadius: 8, 
+    padding: "12px 14px", 
+    fontSize: 14, 
+    color: "var(--foreground)", 
+    outline: "none", 
+    resize: "vertical", 
+    lineHeight: 1.6, 
+    transition: "border-color 0.2s",
+    fontWeight: 500
+  },
+  inputError: { borderColor: "var(--destructive)" },
 
-  tagRow: { display: "flex", flexWrap: "wrap", gap: 6, marginTop: 2 },
-  tag: { display: "inline-block", padding: "2px 10px", borderRadius: 20, fontSize: 12, fontWeight: 500 },
+  tagRow: { display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 },
+  tag: { 
+    display: "inline-block", 
+    padding: "2px 10px", 
+    borderRadius: 6, 
+    fontSize: 11, 
+    fontWeight: 700,
+    background: "var(--secondary)",
+    border: "1px solid var(--border)"
+  },
 
-  flagLabel: { display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, border: "1.5px solid #1f2937", background: "#0d1117", fontSize: 13, fontWeight: 500, color: "#9ca3af", userSelect: "none" },
-  flagDot: { width: 8, height: 8, borderRadius: "50%", flexShrink: 0, transition: "background 0.2s" },
+  flagLabel: { 
+    display: "flex", 
+    alignItems: "center", 
+    gap: 10, 
+    padding: "12px 16px", 
+    borderRadius: 8, 
+    background: "var(--background)", 
+    fontSize: 13, 
+    fontWeight: 600, 
+    color: "var(--foreground)", 
+    userSelect: "none",
+    transition: "all 0.2s"
+  },
+  flagDot: { width: 8, height: 8, borderRadius: "50%", flexShrink: 0 },
 
-  dropzone: { border: "1.5px dashed #1f2937", borderRadius: 12, padding: "40px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer", textAlign: "center", background: "#0d1117", transition: "border-color 0.2s, background 0.2s" },
-  dropzoneActive: { borderColor: "rgba(217,119,6,0.5)", background: "rgba(217,119,6,0.04)" },
-  dropzoneError: { borderColor: "rgba(239,68,68,0.4)" },
-  dropIcon: { width: 52, height: 52, borderRadius: 14, background: "rgba(217,119,6,0.1)", border: "1px solid rgba(217,119,6,0.2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 4 },
-  dropText: { fontSize: 14, color: "#9ca3af", margin: 0, lineHeight: 1.5 },
-  dropHint: { fontSize: 11, color: "#374151", margin: 0 },
+  dropzone: { 
+    border: "2px dashed var(--border)", 
+    borderRadius: 12, 
+    padding: "48px 24px", 
+    display: "flex", 
+    flexDirection: "column", 
+    alignItems: "center", 
+    justifyContent: "center", 
+    gap: 12, 
+    cursor: "pointer", 
+    textAlign: "center", 
+    background: "var(--background)", 
+    transition: "all 0.2s" 
+  },
+  dropzoneActive: { borderColor: "var(--foreground)", background: "var(--secondary)" },
+  dropzoneError: { borderColor: "var(--destructive)" },
+  dropIcon: { 
+    width: 48, height: 48, 
+    borderRadius: 10, 
+    background: "var(--secondary)", 
+    display: "flex", alignItems: "center", justifyContent: "center", 
+    marginBottom: 4 
+  },
+  dropText: { fontSize: 14, color: "var(--foreground)", margin: 0, fontWeight: 600 },
+  dropHint: { fontSize: 12, color: "var(--muted-foreground)", margin: 0 },
 
-  previewItem: { position: "relative", aspectRatio: "1", borderRadius: 10, overflow: "hidden" },
-  previewImg: { width: "100%", height: "100%", objectFit: "cover", border: "1.5px solid #1f2937", borderRadius: 10 },
-  previewRemove: { position: "absolute", top: 5, right: 5, width: 22, height: 22, borderRadius: "50%", background: "rgba(239,68,68,0.9)", border: "none", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", padding: 0 },
-  addMoreBtn: { aspectRatio: "1", border: "1.5px dashed #1f2937", borderRadius: 10, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "#0d1117", transition: "border-color 0.2s", minHeight: 80 },
+  previewItem: { position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" },
+  previewImg: { width: "100%", height: "100%", objectFit: "cover" },
+  previewRemove: { 
+    position: "absolute", top: 4, right: 4, 
+    width: 20, height: 20, 
+    borderRadius: 4, 
+    background: "var(--destructive)", 
+    border: "none", color: "white", 
+    display: "flex", alignItems: "center", justifyContent: "center", 
+    cursor: "pointer" 
+  },
+  addMoreBtn: { 
+    aspectRatio: "1", 
+    border: "1px dashed var(--border)", 
+    borderRadius: 8, 
+    display: "flex", flexDirection: "column", 
+    alignItems: "center", justifyContent: "center", 
+    cursor: "pointer", 
+    background: "var(--background)", 
+    transition: "all 0.2s" 
+  },
 
-  submitRow: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 24px", background: "#111827", border: "1px solid #1f2937", borderRadius: 18, gap: 16, flexWrap: "wrap", animation: "slideUp 0.5s ease" },
-  footerHint: { fontSize: 12, color: "#4b5563" },
-  submitBtn: { display: "inline-flex", alignItems: "center", gap: 8, background: "#d97706", color: "#fff", border: "none", borderRadius: 11, padding: "12px 32px", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", transition: "opacity 0.2s", whiteSpace: "nowrap" },
+  submitRow: { 
+    display: "flex", alignItems: "center", justifyContent: "space-between", 
+    padding: "24px", 
+    background: "var(--background)", 
+    border: "1px solid var(--border)", 
+    borderRadius: 12, 
+    marginTop: 8
+  },
+  footerHint: { fontSize: 13, color: "var(--muted-foreground)" },
   submitDisabled: { opacity: 0.5, cursor: "not-allowed" },
-  spinner: { display: "inline-block", width: 14, height: 14, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", verticalAlign: "middle" },
+  spinner: { 
+    display: "inline-block", 
+    width: 14, height: 14, 
+    border: "2px solid rgba(255,255,255,0.3)", 
+    borderTopColor: "white", 
+    borderRadius: "50%", 
+    animation: "spin 0.7s linear infinite" 
+  },
 
-  // Variants CSS
-  variantContainer: { background: "#0d1117", border: "1px solid #1f2937", borderRadius: 12, padding: 16, marginTop: 4 },
-  vList: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 },
-  vItem: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "#111827", border: "1px solid #1f2937", borderRadius: 8 },
-  vInfo: { display: "flex", flexDirection: "column", gap: 4 },
-  vTitle: { fontSize: 14, fontWeight: 600, color: "#f3f4f6" },
-  vDetails: { fontSize: 12, color: "#9ca3af" },
-  vRemove: { background: "none", border: "none", color: "#f87171", cursor: "pointer", padding: 4, display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.8 },
-  vForm: { background: "rgba(255,255,255,0.02)", border: "1px dashed #1f2937", borderRadius: 8, padding: 16 },
-  vFormTitle: { fontSize: 13, fontWeight: 600, color: "#d1d5db", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.05em" },
-  addVariantBtn: { width: "100%", height: 42, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#1f2937", color: "#f3f4f6", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" },
+  variantContainer: { background: "var(--secondary)", borderRadius: 12, padding: 20, marginTop: 4 },
+  vList: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 },
+  vItem: { 
+    display: "flex", justifyContent: "space-between", alignItems: "center", 
+    padding: "12px 16px", 
+    background: "var(--background)", 
+    border: "1px solid var(--border)", 
+    borderRadius: 8 
+  },
+  vInfo: { display: "flex", flexDirection: "column", gap: 2 },
+  vTitle: { fontSize: 14, fontWeight: 700, color: "var(--foreground)" },
+  vDetails: { fontSize: 12, color: "var(--muted-foreground)" },
+  vRemove: { background: "none", border: "none", color: "var(--destructive)", cursor: "pointer", padding: 4 },
+  vForm: { 
+    background: "var(--background)", 
+    border: "1px solid var(--border)", 
+    borderRadius: 8, 
+    padding: 20,
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+  },
+  vFormTitle: { fontSize: 12, fontWeight: 700, color: "var(--muted-foreground)", margin: "0 0 16px", textTransform: "uppercase" },
+  addVariantBtn: { 
+    width: "100%", height: 42, 
+    display: "flex", alignItems: "center", justifyContent: "center", 
+    gap: 8, background: "var(--foreground)", color: "var(--background)", 
+    border: "none", borderRadius: 8, 
+    fontSize: 13, fontWeight: 700, cursor: "pointer" 
+  },
 
-  toastStack: { position: "fixed", top: 20, right: 20, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10, maxWidth: 340, width: "calc(100vw - 40px)" },
-  toast: { display: "flex", alignItems: "center", gap: 10, padding: "13px 16px", borderRadius: 12, border: "1px solid", fontSize: 14, fontWeight: 500, fontFamily: "'DM Sans', sans-serif", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", animation: "toastSlide 0.3s ease" },
-  toastIcon: { width: 22, height: 22, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0, background: "rgba(255,255,255,0.1)" },
-  toastMsg: { flex: 1, lineHeight: 1.4 },
-  toastClose: { background: "none", border: "none", fontSize: 20, cursor: "pointer", lineHeight: 1, padding: 0, opacity: 0.7, flexShrink: 0 },
+  toastStack: { position: "fixed", top: 24, right: 24, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10, maxWidth: 360 },
+  toast: { 
+    display: "flex", alignItems: "center", gap: 12, 
+    padding: "14px 20px", borderRadius: 10, border: "1px solid", 
+    fontSize: 14, fontWeight: 600, boxShadow: "0 10px 40px rgba(0,0,0,0.1)", 
+    animation: "toastSlide 0.3s ease" 
+  },
+  toastIcon: { fontWeight: 700 },
+  toastMsg: { flex: 1 },
+  toastClose: { background: "none", border: "none", cursor: "pointer", opacity: 0.5 },
 };

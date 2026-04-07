@@ -54,107 +54,119 @@ export default function FraudChecker() {
   }, [searchParams, handleCheck]);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Fraud Checker</h1>
-        <p className="text-gray-500 text-sm">Check customer delivery history and cancellation rates to prevent fraud.</p>
+    <div style={s.page}>
+      <style>{css}</style>
+      
+      {/* Header */}
+      <div style={s.header}>
+        <div>
+          <h1 style={s.title}>Fraud Checker</h1>
+          <p style={s.titleSub}>Check customer delivery history and cancellation rates to prevent fraud.</p>
+        </div>
       </div>
 
-      {/* Form */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-6">
-        <form onSubmit={(e) => { e.preventDefault(); handleCheck(); }} className="flex gap-4 items-end">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Customer Phone Number</label>
-            <input 
-              type="text" 
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="e.g. 01712345678" 
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#da7708] focus:border-[#da7708] outline-none transition-all text-gray-800"
-              required
-            />
+      {/* Form Card */}
+      <div style={s.card}>
+        <form onSubmit={(e) => { e.preventDefault(); handleCheck(); }} style={s.form}>
+          <div style={s.fieldGroup}>
+            <label style={s.label}>Customer Phone Number</label>
+            <div style={s.inputWrapper}>
+              <input 
+                type="text" 
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. 01712345678" 
+                style={s.input}
+                required
+              />
+              <button 
+                type="submit" 
+                disabled={loading || !phone}
+                style={{
+                  ...s.submitBtn,
+                  ...(loading || !phone ? s.btnDisabled : {})
+                }}
+              >
+                {loading ? <Loader2 style={{ ...s.icon, animation: "spin 1s linear infinite" }} /> : <Search style={s.icon} />}
+                <span>Check History</span>
+              </button>
+            </div>
           </div>
-          <button 
-            type="submit" 
-            disabled={loading || !phone}
-            className="px-6 py-2 bg-[#da7708] hover:bg-[#b05f06] text-white font-medium rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 h-11"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            Check History
-          </button>
         </form>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="p-4 mb-6 bg-red-50 text-red-600 border border-red-200 rounded-lg flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5" />
-          {error}
+        <div style={s.errorBadge}>
+          <AlertTriangle size={18} />
+          <span>{error}</span>
         </div>
       )}
 
       {/* Result */}
       {result && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Summary */}
-          <div className="md:col-span-3 grid grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center justify-center py-6">
-              <span className="text-gray-500 text-sm font-medium mb-1">Total Parcels</span>
-              <span className="text-3xl font-bold text-gray-800">{result.total_parcels || 0}</span>
+        <div style={s.resultGrid}>
+          {/* Summary Cards */}
+          <div style={s.statGrid}>
+            <div style={s.statCard}>
+              <span style={s.statLabel}>Total Parcels</span>
+              <span style={s.statValue}>{result.total_parcels || 0}</span>
             </div>
-            <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-sm flex flex-col items-center justify-center py-6">
-              <span className="text-emerald-600 text-sm font-medium mb-1 flex items-center gap-1"><CheckCircle className="w-4 h-4"/> Delivered</span>
-              <span className="text-3xl font-bold text-emerald-700">{result.total_delivered || 0}</span>
+            <div style={{ ...s.statCard, borderBottom: "4px solid var(--success)" }}>
+              <span style={{ ...s.statLabel, color: "var(--success)" }}>
+                <CheckCircle size={14} style={{ marginRight: 4 }} /> Delivered
+              </span>
+              <span style={{ ...s.statValue, color: "var(--success)" }}>{result.total_delivered || 0}</span>
             </div>
-            <div className="bg-rose-50 p-4 rounded-xl border border-rose-200 shadow-sm flex flex-col items-center justify-center py-6">
-              <span className="text-rose-600 text-sm font-medium mb-1 flex items-center gap-1"><XCircle className="w-4 h-4"/> Cancelled</span>
-              <span className="text-3xl font-bold text-rose-700">{result.total_cancel || 0}</span>
+            <div style={{ ...s.statCard, borderBottom: "4px solid var(--destructive)" }}>
+              <span style={{ ...s.statLabel, color: "var(--destructive)" }}>
+                <XCircle size={14} style={{ marginRight: 4 }} /> Cancelled
+              </span>
+              <span style={{ ...s.statValue, color: "var(--destructive)" }}>{result.total_cancel || 0}</span>
             </div>
           </div>
 
-          {/* Action Row */}
+          {/* Alert Column */}
           {(result.total_cancel > 2 || (result.total_cancel > 0 && result.total_delivered === 0)) && (
-            <div className="md:col-span-3">
-              <div className="bg-rose-100/50 border border-rose-200 p-4 rounded-xl flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                   <AlertTriangle className="text-rose-600 w-6 h-6" />
-                   <div>
-                     <p className="text-rose-900 font-bold text-sm">High Risk Customer Detected</p>
-                     <p className="text-rose-700 text-xs">This customer has a significant number of cancellations. Consider blocking access.</p>
-                   </div>
+            <div style={s.alertBox}>
+              <div style={s.alertContent}>
+                <AlertTriangle style={s.alertIcon} />
+                <div>
+                  <p style={s.alertTitle}>High Risk Customer Detected</p>
+                  <p style={s.alertText}>This customer has a significant number of cancellations. Consider blocking access.</p>
                 </div>
-                <button 
-                  onClick={() => navigate('/ip-block', { state: { target: phone, reason: 'High fraud/cancellation rate' } })}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg flex items-center gap-2 transition-colors"
-                >
-                  <ShieldOff size={14} /> Block Customer
-                </button>
               </div>
+              <button 
+                onClick={() => navigate('/ip-block', { state: { target: phone, reason: 'High fraud/cancellation rate' } })}
+                style={s.blockBtn}
+              >
+                <ShieldOff size={14} /> <span>Block Customer</span>
+              </button>
             </div>
           )}
 
-          {/* Details */}
+          {/* Courier Details */}
           {result.apis && Object.keys(result.apis).length > 0 && (
-            <div className="md:col-span-3 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-               <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                  <h3 className="font-semibold text-gray-800">Courier Breakdown</h3>
+            <div style={s.detailsCard}>
+               <div style={s.detailsHeader}>
+                  <h3 style={s.detailsTitle}>Courier Breakdown</h3>
                </div>
-               <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+               <div style={s.detailsBody}>
                  {Object.entries(result.apis).map(([courier, data]) => (
-                    <div key={courier} className="border border-gray-100 rounded-lg p-5 bg-white shadow-sm hover:shadow-md transition-shadow">
-                       <h4 className="font-bold text-gray-800 text-lg mb-4 pb-2 border-b border-gray-100">{courier}</h4>
-                       <div className="space-y-3 text-sm">
-                         <div className="flex justify-between items-center">
-                            <span className="text-gray-500">Total Parcels</span>
-                            <span className="font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded">{data.total_parcels || 0}</span>
+                    <div key={courier} style={s.courierCard}>
+                       <h4 style={s.courierName}>{courier}</h4>
+                       <div style={s.courierStats}>
+                         <div style={s.courierRow}>
+                            <span style={s.courierLabel}>Total Parcels</span>
+                            <span style={s.courierValue}>{data.total_parcels || 0}</span>
                          </div>
-                         <div className="flex justify-between items-center">
-                            <span className="text-gray-500">Delivered</span>
-                            <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{data.total_delivered_parcels || 0}</span>
+                         <div style={s.courierRow}>
+                            <span style={s.courierLabel}>Delivered</span>
+                            <span style={{ ...s.courierValue, color: "var(--success)", background: "var(--secondary)" }}>{data.total_delivered_parcels || 0}</span>
                          </div>
-                         <div className="flex justify-between items-center">
-                            <span className="text-gray-500">Cancelled</span>
-                            <span className="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded">{data.total_cancelled_parcels || 0}</span>
+                         <div style={s.courierRow}>
+                            <span style={s.courierLabel}>Cancelled</span>
+                            <span style={{ ...s.courierValue, color: "var(--destructive)", background: "var(--secondary)" }}>{data.total_cancelled_parcels || 0}</span>
                          </div>
                        </div>
                     </div>
@@ -167,3 +179,50 @@ export default function FraudChecker() {
     </div>
   );
 }
+
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  
+  *, *::before, *::after { box-sizing: border-box; }
+`;
+
+const s = {
+  page: { maxWidth: 900, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', sans-serif", color: "var(--foreground)", animation: "fadeIn 0.4s ease" },
+  header: { marginBottom: 32 },
+  title: { fontSize: 32, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em" },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0 },
+  card: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 12, padding: 24, animation: "slideUp 0.4s ease" },
+  form: { display: "flex", flexDirection: "column", gap: 16 },
+  fieldGroup: { display: "flex", flexDirection: "column", gap: 12 },
+  label: { fontSize: 11, fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" },
+  inputWrapper: { display: "flex", gap: 12 },
+  input: { flex: 1, background: "var(--background)", border: "1px solid var(--border)", borderRadius: 10, padding: "12px 16px", fontSize: 14, color: "var(--foreground)", outline: "none", fontWeight: 500, transition: "all 0.2s" },
+  submitBtn: { display: "flex", alignItems: "center", gap: 8, background: "var(--foreground)", color: "var(--background)", border: "none", borderRadius: 10, padding: "0 24px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" },
+  btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
+  icon: { width: 16, height: 16 },
+  errorBadge: { display: "flex", alignItems: "center", gap: 10, background: "var(--destructive)", color: "white", padding: "12px 16px", borderRadius: 10, marginTop: 24, fontSize: 14, fontWeight: 600 },
+  resultGrid: { display: "flex", flexDirection: "column", gap: 24, marginTop: 32 },
+  statGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 },
+  statCard: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 12, padding: "24px 16px", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, textAlign: "center", animation: "slideUp 0.45s ease" },
+  statLabel: { fontSize: 12, fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.03em", display: "flex", alignItems: "center" },
+  statValue: { fontSize: 32, fontWeight: 800, color: "var(--foreground)" },
+  alertBox: { background: "var(--secondary)", border: "1px solid var(--border)", padding: "20px 24px", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, animation: "slideUp 0.5s ease" },
+  alertContent: { display: "flex", alignItems: "center", gap: 16 },
+  alertIcon: { color: "var(--destructive)", width: 28, height: 28 },
+  alertTitle: { fontSize: 14, fontWeight: 800, margin: 0, color: "var(--foreground)" },
+  alertText: { fontSize: 13, color: "var(--muted-foreground)", margin: "2px 0 0" },
+  blockBtn: { display: "flex", alignItems: "center", gap: 8, background: "var(--destructive)", color: "white", border: "none", borderRadius: 8, padding: "10px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" },
+  detailsCard: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", animation: "slideUp 0.55s ease" },
+  detailsHeader: { padding: "16px 24px", background: "var(--secondary)", borderBottom: "1px solid var(--border)" },
+  detailsTitle: { fontSize: 14, fontWeight: 800, margin: 0 },
+  detailsBody: { padding: 24, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 24 },
+  courierCard: { border: "1px solid var(--border)", borderRadius: 10, padding: 20 },
+  courierName: { fontSize: 16, fontWeight: 800, margin: "0 0 16px", color: "var(--foreground)", borderBottom: "1px solid var(--border)", paddingBottom: 8 },
+  courierStats: { display: "flex", flexDirection: "column", gap: 12 },
+  courierRow: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  courierLabel: { fontSize: 12, color: "var(--muted-foreground)", fontWeight: 500 },
+  courierValue: { fontSize: 12, fontWeight: 700, color: "var(--foreground)", background: "var(--secondary)", padding: "2px 8px", borderRadius: 4 },
+};

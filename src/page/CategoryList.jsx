@@ -21,9 +21,9 @@ function useToast() {
 }
 
 const TOAST_META = {
-  success: { bg: "#064e3b", color: "#6ee7b7", border: "#065f46", icon: "✓" },
-  error: { bg: "#450a0a", color: "#fca5a5", border: "#7f1d1d", icon: "✕" },
-  info: { bg: "#0c1a3a", color: "#93c5fd", border: "#1e3a6e", icon: "i" },
+  success: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "✓" },
+  error: { bg: "var(--background)", color: "var(--destructive)", border: "var(--border)", icon: "✕" },
+  info: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "i" },
 };
 
 function ToastStack({ toasts, onRemove }) {
@@ -93,8 +93,8 @@ function useVirtualList(items, containerRef) {
 function StatCard({ icon: Icon, label, value, accent }) {
   return (
     <div style={s.statCard}>
-      <div style={{ ...s.statIcon, background: accent + "18", color: accent }}>
-        <Icon size={18} />
+      <div style={{ ...s.statIcon, background: 'var(--secondary)', color: 'var(--foreground)' }}>
+        <Icon size={20} />
       </div>
       <div>
         <div style={s.statValue}>{value}</div>
@@ -118,11 +118,13 @@ function CategoryRow({
     <tr
       style={{
         ...s.tr,
-        background: isHovered ? "#1a2233" : "transparent",
+        background: isHovered ? "var(--secondary)" : "transparent",
         height: ROW_HEIGHT,
+        cursor: "pointer",
       }}
       onMouseEnter={() => onHover(cat._id || cat.slug)}
       onMouseLeave={() => onHover(null)}
+      onClick={() => onEdit(cat)}
     >
       {/* # */}
       <td style={s.td}>
@@ -135,7 +137,7 @@ function CategoryRow({
           <img src={cat.image.url} alt={cat.name} style={s.catImg} />
         ) : (
           <div style={s.catImgPlaceholder}>
-            <Layers size={16} color="#4b5563" />
+            <Layers size={16} color="var(--muted-foreground)" />
           </div>
         )}
       </td>
@@ -157,8 +159,11 @@ function CategoryRow({
       <td style={{ ...s.td, textAlign: "center" }}>
         <div style={s.actionsCell}>
           <button
-            style={{ ...s.editBtn, ...(isHovered ? s.editBtnHover : {}) }}
-            onClick={() => onEdit(cat)}
+            style={s.editBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(cat);
+            }}
             title="Edit category"
           >
             <Edit2 size={14} />
@@ -166,10 +171,12 @@ function CategoryRow({
           <button
             style={{
               ...s.deleteBtn,
-              ...(isHovered ? s.deleteBtnHover : {}),
               ...(isDeleting ? s.btnDisabled : {}),
             }}
-            onClick={() => onDelete(cat.slug)}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(cat.slug);
+            }}
             disabled={isDeleting}
             title="Delete category"
           >
@@ -305,25 +312,21 @@ export default function CategoryTable() {
           icon={Layers}
           label="Total Categories"
           value={categories.length}
-          accent="#d97706"
         />
         <StatCard
           icon={Layers}
           label="Filtered Results"
           value={filtered.length}
-          accent="#818cf8"
         />
         <StatCard
           icon={Layers}
           label="With Images"
           value={categories.filter((c) => c.image?.url).length}
-          accent="#34d399"
         />
         <StatCard
           icon={Layers}
           label="No Description"
           value={categories.filter((c) => !c.description).length}
-          accent="#f87171"
         />
       </div>
 
@@ -471,13 +474,13 @@ export default function CategoryTable() {
         {/* Footer */}
         <div className="ct-table-footer">
           Showing{" "}
-          <strong style={{ color: "#f3f4f6" }}>{filtered.length}</strong>{" "}
+          <strong style={{ color: "var(--foreground)" }}>{filtered.length}</strong>{" "}
           categories
           {filtered.length !== categories.length && (
             <>
               {" "}
               ·{" "}
-              <strong style={{ color: "#d97706" }}>
+              <strong style={{ color: "var(--foreground)" }}>
                 {categories.length - filtered.length}
               </strong>{" "}
               hidden by filter
@@ -492,110 +495,25 @@ export default function CategoryTable() {
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
-
   @keyframes spin       { to { transform: rotate(360deg); } }
-  @keyframes fadeIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes slideUp    { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes toastSlide { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
-
-  *, *::before, *::after { box-sizing: border-box; }
-  ::-webkit-scrollbar       { width:6px; height:6px; }
-  ::-webkit-scrollbar-track { background:#0d0d0d; }
-  ::-webkit-scrollbar-thumb { background:#1f2937; border-radius:3px; }
-
-  .ct-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px; font-weight: 700;
-    margin: 0 0 4px; color: #f9fafb;
-    letter-spacing: -0.02em;
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  .ct-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .ct-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .ct-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    padding: 20px 24px;
-    border-bottom: 1px solid #1f2937;
-  }
-
-  .ct-search-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #0d1117;
-    border: 1.5px solid #1f2937;
-    border-radius: 10px;
-    padding: 8px 14px;
-    min-width: 280px;
-  }
-
-  .ct-btn-add {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: #d97706; color: #fff; border: none;
-    border-radius: 11px; padding: 10px 18px;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
-    white-space: nowrap; flex-shrink: 0;
-    transition: opacity 0.2s;
-  }
-  .ct-btn-add:hover { opacity: 0.88; }
-
-  .ct-table-footer {
-    padding: 14px 24px;
-    border-top: 1px solid #1f2937;
-    font-size: 12px; color: #4b5563;
-    text-align: right;
-  }
-
-  @media (max-width: 900px) {
-    .ct-stats { grid-template-columns: repeat(2, 1fr); }
-    .ct-card-header { flex-direction: column; align-items: flex-start; padding: 16px 18px; }
-    .ct-search-wrap { width: 100%; min-width: unset; }
-  }
-
-  @media (max-width: 600px) {
-    .ct-title { font-size: 21px; }
-    .ct-header { margin-bottom: 18px; }
-    .ct-stats { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
-    .ct-table-footer { text-align: center; padding: 12px 14px; }
-    .ct-btn-add span { display: none; }
-    .ct-btn-add { padding: 10px 12px; border-radius: 10px; }
-  }
-
-  @media (max-width: 420px) {
-    .ct-title { font-size: 18px; }
-    .ct-stats { grid-template-columns: 1fr 1fr; }
+  @keyframes toastSlide {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
   }
 `;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: {
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#e5e7eb",
+  page: { 
+    maxWidth: 1200, 
+    margin: "0 auto",
     padding: "32px 24px 80px",
-    animation: "fadeIn 0.35s ease",
+    fontFamily: "'Inter', sans-serif"
   },
-
   centerState: {
     display: "flex",
     flexDirection: "column",
@@ -605,39 +523,39 @@ const s = {
     gap: 16,
   },
   spinner: {
-    width: 40,
-    height: 40,
-    border: "3px solid #1f2937",
-    borderTop: "3px solid #d97706",
+    width: 32,
+    height: 32,
+    border: "3px solid var(--secondary)",
+    borderTop: "3px solid var(--foreground)",
     borderRadius: "50%",
     animation: "spin 0.8s linear infinite",
   },
-  stateText: { color: "#6b7280", fontSize: 14 },
+  stateText: { color: "var(--muted-foreground)", fontSize: 14 },
 
   breadcrumb: {
     display: "flex",
-    gap: 6,
+    gap: 8,
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: 8,
   },
-  breadcrumbLink: { color: "#6b7280", fontSize: 13, cursor: "pointer" },
-  breadcrumbSep: { color: "#374151" },
-  breadcrumbCurrent: { color: "#d97706", fontSize: 13 },
-  titleSub: { fontSize: 13, color: "#6b7280", margin: 0 },
+  breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
+  breadcrumbSep: { color: "var(--border)", fontSize: 12 },
+  breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0, fontWeight: 400 },
 
   statCard: {
     display: "flex",
     alignItems: "center",
-    gap: 14,
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 14,
-    padding: "16px 20px",
+    gap: 16,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    padding: "20px 24px",
     animation: "slideUp 0.4s ease",
   },
   statIcon: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: 10,
     display: "flex",
     alignItems: "center",
@@ -645,49 +563,50 @@ const s = {
     flexShrink: 0,
   },
   statValue: {
-    fontFamily: "'Playfair Display', serif",
-    fontSize: 22,
-    fontWeight: 700,
-    color: "#f9fafb",
+    fontSize: 24,
+    fontWeight: 800,
+    color: "var(--foreground)",
     lineHeight: 1,
+    letterSpacing: "-0.02em",
   },
-  statLabel: { fontSize: 12, color: "#6b7280", marginTop: 3 },
+  statLabel: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 4, fontWeight: 500 },
 
   card: {
-    background: "#111827",
-    border: "1px solid #1f2937",
-    borderRadius: 18,
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
     overflow: "hidden",
     animation: "slideUp 0.45s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
   },
   cardTitleWrap: { display: "flex", alignItems: "center", gap: 14 },
   cardIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    background: "rgba(217,119,6,0.12)",
-    color: "#d97706",
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    background: "var(--secondary)",
+    color: "var(--foreground)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
-  cardTitle: { fontSize: 15, fontWeight: 600, color: "#f3f4f6" },
-  cardSubtitle: { fontSize: 12, color: "#6b7280", marginTop: 2 },
+  cardTitle: { fontSize: 16, fontWeight: 700, color: "var(--foreground)", letterSpacing: "-0.01em" },
+  cardSubtitle: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 3 },
 
-  searchIcon: { fontSize: 13, flexShrink: 0 },
+  searchIcon: { fontSize: 14, opacity: 0.5 },
   searchInput: {
     background: "none",
     border: "none",
     outline: "none",
-    color: "#f3f4f6",
-    fontSize: 13,
-    fontFamily: "'DM Sans', sans-serif",
+    color: "var(--foreground)",
+    fontSize: 14,
     width: "100%",
+    fontWeight: 500,
   },
   searchClear: {
     background: "none",
     border: "none",
-    color: "#6b7280",
+    color: "var(--muted-foreground)",
     fontSize: 18,
     cursor: "pointer",
     padding: 0,
@@ -695,84 +614,74 @@ const s = {
     flexShrink: 0,
   },
 
-  tableOuterWrap: { overflowX: "auto", WebkitOverflowScrolling: "touch" },
+  tableOuterWrap: { overflowX: "auto" },
   tableHeaderWrap: {
     position: "sticky",
     top: 0,
     zIndex: 2,
-    background: "#0d1117",
-    borderBottom: "1px solid #1f2937",
-    overflowX: "hidden",
+    background: "var(--background)",
+    borderBottom: "1px solid var(--border)",
   },
   tableScrollBody: {
     overflowY: "auto",
-    WebkitOverflowScrolling: "touch",
-    minWidth: 680,
+    minWidth: 800,
   },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: 680 },
+  table: { width: "100%", borderCollapse: "collapse" },
 
   th: {
-    padding: "12px 14px",
-    fontSize: 11,
+    padding: "14px 16px",
+    fontSize: 12,
     fontWeight: 600,
-    color: "#6b7280",
+    color: "var(--muted-foreground)",
     textTransform: "uppercase",
-    letterSpacing: "0.07em",
-    background: "#0d1117",
-    whiteSpace: "nowrap",
+    letterSpacing: "0.05em",
+    textAlign: "left",
   },
-  sortArrow: { color: "#d97706", fontStyle: "normal" },
+  sortArrow: { color: "var(--foreground)", fontStyle: "normal" },
 
   tr: {
-    borderBottom: "1px solid #1a2233",
-    transition: "background 0.12s ease",
+    borderBottom: "1px solid var(--border)",
+    transition: "background 0.2s ease",
   },
   td: {
-    padding: "0 14px",
-    fontSize: 13,
-    color: "#d1d5db",
+    padding: "0 16px",
+    fontSize: 14,
+    color: "var(--foreground)",
     verticalAlign: "middle",
     height: ROW_HEIGHT,
   },
 
   indexBadge: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 26,
-    height: 26,
-    background: "#1f2937",
-    borderRadius: 7,
     fontSize: 12,
     fontWeight: 600,
-    color: "#9ca3af",
+    color: "var(--muted-foreground)",
   },
 
   catImg: {
-    width: 48,
-    height: 48,
-    borderRadius: 9,
+    width: 44,
+    height: 44,
+    borderRadius: 8,
     objectFit: "cover",
-    border: "1.5px solid #1f2937",
+    border: "1px solid var(--border)",
     display: "block",
   },
   catImgPlaceholder: {
-    width: 48,
-    height: 48,
-    borderRadius: 9,
-    background: "#1f2937",
-    border: "1.5px solid #374151",
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    background: "var(--secondary)",
+    border: "1px solid var(--border)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
 
-  nameCell: { display: "flex", flexDirection: "column", gap: 2 },
-  catName: { fontSize: 13, fontWeight: 600, color: "#f3f4f6", lineHeight: 1.3 },
+  nameCell: { display: "flex", flexDirection: "column", gap: 1 },
+  catName: { fontSize: 14, fontWeight: 600, color: "var(--foreground)", lineHeight: 1.4 },
   catSlug: {
-    fontSize: 11,
-    color: "#6b7280",
-    fontFamily: "'Courier New', monospace",
+    fontSize: 12,
+    color: "var(--muted-foreground)",
+    fontWeight: 500,
   },
 
   descCell: {
@@ -800,15 +709,14 @@ const s = {
     width: 34,
     height: 34,
     borderRadius: 9,
-    background: "rgba(99,102,241,0.1)",
-    border: "1px solid rgba(99,102,241,0.25)",
-    color: "#818cf8",
+    background: "var(--secondary)",
+    border: "1px solid var(--border)",
+    color: "var(--foreground)",
     cursor: "pointer",
-    transition: "background 0.2s, transform 0.15s",
+    transition: "all 0.2s",
   },
   editBtnHover: {
-    background: "rgba(99,102,241,0.2)",
-    transform: "scale(1.08)",
+    background: "var(--accent)",
   },
 
   deleteBtn: {
@@ -818,15 +726,14 @@ const s = {
     width: 34,
     height: 34,
     borderRadius: 9,
-    background: "rgba(239,68,68,0.1)",
-    border: "1px solid rgba(239,68,68,0.25)",
-    color: "#f87171",
+    background: "var(--secondary)",
+    border: "1px solid var(--border)",
+    color: "var(--destructive)",
     cursor: "pointer",
-    transition: "background 0.2s, transform 0.15s",
+    transition: "all 0.2s",
   },
   deleteBtnHover: {
-    background: "rgba(239,68,68,0.2)",
-    transform: "scale(1.08)",
+    background: "var(--destructive-foreground)",
   },
   btnDisabled: { opacity: 0.45, cursor: "not-allowed", transform: "none" },
 

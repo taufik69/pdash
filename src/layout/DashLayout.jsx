@@ -17,14 +17,14 @@ import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 */
 
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
   .dashboard-root {
     display: flex;
     height: 100vh;
     width: 100%;
-    background: #ffffff;
-    font-family: 'DM Mono', 'Fira Mono', 'Courier New', monospace;
+    background: var(--background);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow: hidden;
   }
 
@@ -34,24 +34,12 @@ const styles = `
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    height: 52px;
+    height: 56px;
     flex-shrink: 0;
-    padding: 0 20px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 0 24px;
+    border-bottom: 1px solid var(--border);
     position: relative;
-    background: #ffffff;
-  }
-
-  /* thin amber rule at very bottom of header */
-  .dashboard-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 20px;
-    right: 20px;
-    height: 1px;
-    background: linear-gradient(to right, #da770830, transparent);
-    pointer-events: none;
+    background: var(--background);
   }
 
   /* Breadcrumb / title slot (optional children) */
@@ -59,18 +47,20 @@ const styles = `
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    color: #6b7280;
-    letter-spacing: 0.06em;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    letter-spacing: -0.01em;
   }
 
   .header-breadcrumb .sep {
-    color: #374151;
+    color: var(--border);
   }
 
   .header-breadcrumb .active {
-    color: #da7708;
+    color: var(--foreground);
+    font-weight: 600;
   }
 
   /* Sidebar trigger override */
@@ -78,26 +68,26 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
     background: transparent;
-    border: 1px solid #374151;
-    color: #9ca3af;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
     cursor: pointer;
     flex-shrink: 0;
-    transition: all 0.13s ease;
+    transition: all 0.2s ease;
   }
 
   .dashboard-trigger:hover {
-    background: #1f2937;
-    border-color: #da7708;
-    color: #da7708;
+    background: var(--secondary);
+    color: var(--foreground);
+    border-color: var(--foreground);
   }
 
   .dashboard-trigger svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
 
   /* ── Inset / content area ─────────────────────────────── */
@@ -106,73 +96,38 @@ const styles = `
     flex-direction: column;
     flex: 1;
     min-width: 0;
-    background: #ffffff;
+    background: var(--background);
   }
 
   /* ── Main scroll area ─────────────────────────────────── */
   .dashboard-main {
     flex: 1;
     overflow: auto;
-    padding: 24px 28px;
-    background: #ffffff;
-    color: #111827;
+    padding: 32px;
+    background: var(--background);
+    color: var(--foreground);
   }
 
   /* custom scrollbar */
   .dashboard-main::-webkit-scrollbar {
-    width: 5px;
+    width: 6px;
   }
   .dashboard-main::-webkit-scrollbar-track {
-    background: #111827;
+    background: transparent;
   }
   .dashboard-main::-webkit-scrollbar-thumb {
-    background: #374151;
-    border-radius: 3px;
+    background: var(--border);
+    border-radius: 10px;
   }
   .dashboard-main::-webkit-scrollbar-thumb:hover {
-    background: #da770860;
-  }
-
-  /* ── Theme toggle ─────────────────────────────────────── */
-  .theme-toggle-wrapper {
-    position: fixed;
-    top: 12px;
-    right: 16px;
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-    background: #1f2937;
-    border: 1px solid #374151;
-    transition: all 0.13s ease;
-    cursor: pointer;
-  }
-
-  .theme-toggle-wrapper:hover {
-    border-color: #da7708;
-    box-shadow: 0 0 8px #da770830;
-  }
-
-  .theme-toggle-wrapper svg {
-    width: 14px;
-    height: 14px;
-    color: #9ca3af;
-    transition: color 0.13s ease;
-  }
-
-  .theme-toggle-wrapper:hover svg {
-    color: #da7708;
+    background: var(--muted-foreground);
   }
 
   /* ── Sidebar border accent ────────────────────────────── */
   [data-sidebar="sidebar"] {
-    border-right: 1px solid #e5e7eb !important;
-    box-shadow: 2px 0 12px rgba(0,0,0,0.05) !important;
-    background: #ffffff !important;
-    color: #111827 !important;
+    border-right: 1px solid var(--border) !important;
+    background: var(--background) !important;
+    color: var(--foreground) !important;
   }
 `;
 
@@ -189,7 +144,7 @@ function DashboardLayout() {
           <SidebarInset className="dashboard-inset">
             {/* Header */}
             <header className="dashboard-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <SidebarTrigger className="dashboard-trigger" />
 
                 {/* Breadcrumb slot — customize per route if needed */}
@@ -201,7 +156,8 @@ function DashboardLayout() {
               </div>
 
               {/* Visit Site Button */}
-              <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <ThemeToggle />
                 <a
                   href="http://localhost:3000"
                   target="_blank"
@@ -209,25 +165,26 @@ function DashboardLayout() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    padding: '6px 12px',
-                    backgroundColor: '#da7708',
-                    color: '#ffffff',
+                    gap: '8px',
+                    padding: '8px 16px',
+                    backgroundColor: 'var(--primary)',
+                    color: 'var(--primary-foreground)',
                     borderRadius: '6px',
                     fontSize: '13px',
-                    fontWeight: '500',
+                    fontWeight: '600',
                     textDecoration: 'none',
-                    transition: 'opacity 0.2s'
+                    transition: 'opacity 0.2s',
+                    border: '1px solid var(--primary)'
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
                   onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                     <polyline points="15 3 21 3 21 9"></polyline>
                     <line x1="10" y1="14" x2="21" y2="3"></line>
                   </svg>
-                  সাইট ভিজিট
+                  Visit Site
                 </a>
               </div>
             </header>

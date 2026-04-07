@@ -20,8 +20,8 @@ function useToast() {
 }
 
 const TOAST_META = {
-  success: { bg: "#064e3b", color: "#6ee7b7", border: "#065f46", icon: "✓" },
-  error: { bg: "#450a0a", color: "#fca5a5", border: "#7f1d1d", icon: "✕" },
+  success: { bg: "var(--background)", color: "var(--foreground)", border: "var(--border)", icon: "✓" },
+  error: { bg: "var(--background)", color: "var(--destructive)", border: "var(--border)", icon: "✕" },
 };
 
 function ToastStack({ toasts, onRemove }) {
@@ -56,10 +56,10 @@ function ToastStack({ toasts, onRemove }) {
 }
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-function StatCard({ icon: Icon, label, value, accent }) {
+function StatCard({ icon: Icon, label, value }) {
   return (
     <div style={s.statCard}>
-      <div style={{ ...s.statIcon, background: accent + "18", color: accent }}>
+      <div style={s.statIcon}>
         <Icon size={18} />
       </div>
       <div>
@@ -78,7 +78,7 @@ function BannerRow({ banner, index, onEdit, onDelete, isDeleting }) {
     <tr
       style={{
         ...s.tr,
-        background: isHovered ? "#1a2233" : "transparent",
+        background: isHovered ? "var(--secondary)" : "transparent",
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -103,11 +103,11 @@ function BannerRow({ banner, index, onEdit, onDelete, isDeleting }) {
       </td>
       <td style={s.td}>
         {banner.isActive ? (
-          <div style={{ ...s.statusBadge, color: "#34d399", background: "rgba(52,211,153,0.1)" }}>
+          <div style={{ ...s.statusBadge, color: "var(--success)", background: "var(--secondary)" }}>
             <Monitor size={12} style={{ marginRight: 4 }} /> Active
           </div>
         ) : (
-          <div style={{ ...s.statusBadge, color: "#9ca3af", background: "rgba(156,163,175,0.1)" }}>
+          <div style={{ ...s.statusBadge, color: "var(--muted-foreground)", background: "var(--secondary)" }}>
             <MonitorOff size={12} style={{ marginRight: 4 }} /> Inactive
           </div>
         )}
@@ -212,9 +212,9 @@ export default function BannerList() {
 
       {/* ── Stats ── */}
       <div className="ct-stats">
-        <StatCard icon={Images} label="Total Banners" value={banners?.length || 0} accent="#d97706" />
-        <StatCard icon={Monitor} label="Active Banners" value={banners?.filter((b) => b.isActive)?.length || 0} accent="#34d399" />
-        <StatCard icon={MonitorOff} label="Inactive" value={banners?.filter((b) => !b.isActive)?.length || 0} accent="#6b7280" />
+        <StatCard icon={Images} label="Total Banners" value={banners?.length || 0} />
+        <StatCard icon={Monitor} label="Active Banners" value={banners?.filter((b) => b.isActive)?.length || 0}/>
+        <StatCard icon={MonitorOff} label="Inactive" value={banners?.filter((b) => !b.isActive)?.length || 0} />
       </div>
 
       {/* ── Table Card ── */}
@@ -277,53 +277,78 @@ export default function BannerList() {
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
 const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes toastSlide { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
 
-  @keyframes spin       { to { transform: rotate(360deg); } }
-  @keyframes fadeIn     { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes slideUp    { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  .ct-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; gap: 16px; }
+  .ct-title { font-size: 32px; font-weight: 800; color: var(--foreground); letter-spacing: -0.03em; margin: 0; }
+  .ct-stats { display: flex; gap: 16px; margin-bottom: 32px; }
+  .ct-card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 24px; border-bottom: 1px solid var(--border); }
+  
+  .ct-btn-add { 
+    display: inline-flex; align-items: center; gap: 8px; 
+    background: var(--primary); color: var(--primary-foreground); 
+    border: none; border-radius: 10px; padding: 10px 20px; 
+    font-size: 14px; font-weight: 700; cursor: pointer; 
+    transition: all 0.2s; 
+  }
+  .ct-btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
 `;
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: { fontFamily: "'DM Sans', sans-serif", color: "#e5e7eb", padding: "32px 24px 80px", animation: "fadeIn 0.35s ease" },
+  page: { fontFamily: "'Inter', sans-serif", color: "var(--foreground)", padding: "32px 24px 80px", animation: "fadeIn 0.4s ease" },
   centerState: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "50vh", gap: 16 },
-  spinner: { width: 40, height: 40, border: "3px solid #1f2937", borderTop: "3px solid #d97706", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
-  stateText: { color: "#6b7280", fontSize: 14 },
-  breadcrumb: { display: "flex", gap: 6, alignItems: "center", marginBottom: 6 },
-  breadcrumbLink: { color: "#6b7280", fontSize: 13, cursor: "pointer" },
-  breadcrumbSep: { color: "#374151" },
-  breadcrumbCurrent: { color: "#d97706", fontSize: 13 },
-  titleSub: { fontSize: 13, color: "#6b7280", margin: 0 },
-  btnAdd: { display: "inline-flex", alignItems: "center", gap: 7, background: "#d97706", color: "#fff", border: "none", borderRadius: 11, padding: "10px 18px", fontSize: 13, fontWeight: 600, cursor: "pointer" },
-  statCard: { display: "flex", alignItems: "center", gap: 14, background: "#111827", border: "1px solid #1f2937", borderRadius: 14, padding: "16px 20px" },
-  statIcon: { width: 36, height: 36, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center" },
-  statValue: { fontSize: 20, fontWeight: 700, color: "#f9fafb" },
-  statLabel: { fontSize: 11, color: "#6b7280", marginTop: 2 },
-  card: { background: "#111827", border: "1px solid #1f2937", borderRadius: 18, overflow: "hidden" },
-  cardTitleWrap: { display: "flex", alignItems: "center", gap: 14 },
-  cardIcon: { width: 34, height: 34, borderRadius: 9, background: "rgba(217,119,6,0.12)", color: "#d97706", display: "flex", alignItems: "center", justifyContent: "center" },
-  cardTitle: { fontSize: 14, fontWeight: 600, color: "#f3f4f6" },
-  cardSubtitle: { fontSize: 11, color: "#6b7280", marginTop: 1 },
+  spinner: { width: 40, height: 40, border: "3px solid var(--border)", borderTop: "3px solid var(--foreground)", borderRadius: "50%", animation: "spin 0.8s linear infinite" },
+  stateText: { color: "var(--muted-foreground)", fontSize: 14, fontWeight: 500 },
+  breadcrumb: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8 },
+  breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
+  breadcrumbSep: { color: "var(--border)", fontSize: 12 },
+  breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0 },
+  statCard: { 
+    display: "flex", alignItems: "center", flex: 1, gap: 16, 
+    background: "var(--background)", border: "1px solid var(--border)", 
+    borderRadius: 12, padding: "20px", animation: "slideUp 0.4s ease",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+  },
+  statIcon: { 
+    width: 44, height: 44, borderRadius: 10, 
+    display: "flex", alignItems: "center", justifyContent: "center", 
+    flexShrink: 0, background: "var(--secondary)", color: "var(--foreground)" 
+  },
+  statValue: { fontSize: 24, fontWeight: 800, color: "var(--foreground)", lineHeight: 1, letterSpacing: "-0.02em" },
+  statLabel: { fontSize: 12, color: "var(--muted-foreground)", marginTop: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" },
+  card: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", animation: "slideUp 0.45s ease" },
+  cardTitleWrap: { display: "flex", alignItems: "center", gap: 16 },
+  cardIcon: { 
+    width: 40, height: 40, borderRadius: 10, 
+    background: "var(--secondary)", color: "var(--foreground)", 
+    display: "flex", alignItems: "center", justifyContent: "center" 
+  },
+  cardTitle: { fontSize: 16, fontWeight: 700, color: "var(--foreground)" },
+  cardSubtitle: { fontSize: 13, color: "var(--muted-foreground)" },
   tableOuterWrap: { overflowX: "auto" },
-  table: { width: "100%", borderCollapse: "collapse", minWidth: 600 },
-  th: { padding: "14px", fontSize: 11, fontWeight: 600, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.07em", background: "#0d1117", textAlign: "left", borderBottom: "1px solid #1f2937" },
-  td: { padding: "12px 14px", fontSize: 13, color: "#d1d5db", borderBottom: "1px solid #1a2233" },
-  tr: { transition: "background 0.1s ease" },
-  indexBadge: { width: 24, height: 24, background: "#1f2937", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#9ca3af" },
-  bannerThumb: { width: 90, height: 50, borderRadius: 6, objectFit: "cover", border: "1px solid #1f2937" },
-  bannerThumbPlaceholder: { width: 90, height: 50, background: "#1f2937", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center" },
+  table: { width: "100%", borderCollapse: "collapse" },
+  th: { padding: "16px 20px", fontSize: 11, fontWeight: 800, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "left", background: "var(--secondary)", borderBottom: "1px solid var(--border)" },
+  td: { padding: "16px 20px", fontSize: 14, color: "var(--foreground)", borderBottom: "1px solid var(--border)", fontWeight: 500 },
+  tr: { transition: "all 0.2s ease" },
+  indexBadge: { width: 28, height: 28, background: "var(--secondary)", borderRadius: 6, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "var(--foreground)" },
+  bannerThumb: { width: 120, height: 60, borderRadius: 8, objectFit: "cover", border: "1px solid var(--border)", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" },
+  bannerThumbPlaceholder: { width: 120, height: 60, background: "var(--secondary)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border)" },
   nameCell: { display: "flex", flexDirection: "column", gap: 2 },
-  bannerTitle: { fontWeight: 600, color: "#f3f4f6" },
-  bannerId: { fontSize: 10, color: "#4b5563", fontFamily: "monospace" },
-  statusBadge: { display: "inline-flex", alignItems: "center", padding: "4px 10px", borderRadius: 20, fontSize: 11, fontWeight: 500 },
-  actionsCell: { display: "flex", alignItems: "center", justifyContent: "center", gap: 8 },
-  editBtn: { width: 30, height: 30, borderRadius: 8, border: "1px solid #1f2937", background: "none", color: "#6b7280", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
-  deleteBtn: { width: 30, height: 30, borderRadius: 8, border: "1px solid rgba(239,68,68,0.15)", background: "none", color: "#f87171", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
-  emptyCell: { padding: "80px 0" },
-  emptyState: { display: "flex", flexDirection: "column", alignItems: "center", gap: 12 },
-  emptyTitle: { fontSize: 14, color: "#6b7280" },
-  emptyBtn: { background: "none", border: "1px solid #d97706", color: "#d97706", padding: "8px 16px", borderRadius: 8, fontSize: 12, cursor: "pointer" },
-  toastStack: { position: "fixed", top: 20, right: 20, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10 },
-  toast: { display: "flex", alignItems: "center", gap: 10, padding: "12px 16px", borderRadius: 10, border: "1px solid", fontSize: 13 },
+  bannerTitle: { fontSize: 14, fontWeight: 700, color: "var(--foreground)" },
+  bannerId: { fontSize: 12, color: "var(--muted-foreground)", fontStyle: "italic" },
+  statusBadge: { display: "inline-flex", alignItems: "center", padding: "6px 12px", borderRadius: 20, fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.03em" },
+  actionsCell: { display: "flex", alignItems: "center", justifyContent: "center", gap: 10 },
+  editBtn: { width: 36, height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--secondary)", color: "var(--foreground)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" },
+  deleteBtn: { width: 36, height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "var(--secondary)", color: "var(--destructive)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s" },
+  btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
+  emptyCell: { padding: "100px 0" },
+  emptyState: { display: "flex", flexDirection: "column", alignItems: "center", gap: 16 },
+  emptyTitle: { fontSize: 18, fontWeight: 700, color: "var(--muted-foreground)" },
+  emptyBtn: { background: "var(--foreground)", color: "var(--background)", border: "none", padding: "10px 24px", borderRadius: 8, fontSize: 14, fontWeight: 700, cursor: "pointer" },
+  toastStack: { position: "fixed", top: 24, right: 24, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10, maxWidth: 360 },
+  toast: { display: "flex", alignItems: "center", gap: 12, padding: "14px 20px", borderRadius: 10, border: "1px solid var(--border)", fontSize: 14, fontWeight: 600, boxShadow: "0 10px 40px rgba(0,0,0,0.1)", animation: "toastSlide 0.3s ease" },
 };

@@ -15,23 +15,15 @@ export default function IPBlockManager() {
 
   useEffect(() => {
     fetchBlockedIps();
-    
-    // Check if we have data passed from Fraud Checker or other pages
-    if (location.state?.target) {
-      setNewIp(location.state.target);
-    }
-    if (location.state?.reason) {
-      setReason(location.state.reason);
-    }
+    if (location.state?.target) setNewIp(location.state.target);
+    if (location.state?.reason) setReason(location.state.reason);
   }, [location.state]);
 
   const fetchBlockedIps = async () => {
     try {
       const res = await fetch(`${API_BASE}/security/blocked-ips`);
       const data = await res.json();
-      if (data.success) {
-        setBlockedIps(data.data);
-      }
+      if (data.success) setBlockedIps(data.data);
     } catch (err) {
       console.error("Failed to fetch blocked IPs", err);
     } finally {
@@ -42,7 +34,6 @@ export default function IPBlockManager() {
   const handleBlockIp = async (e) => {
     e.preventDefault();
     if (!newIp) return;
-
     setAdding(true);
     try {
       const res = await fetch(`${API_BASE}/security/block`, {
@@ -69,9 +60,7 @@ export default function IPBlockManager() {
 
   const handleUnblock = async (id) => {
     try {
-      const res = await fetch(`${API_BASE}/security/unblock/${id}`, {
-        method: "PUT",
-      });
+      const res = await fetch(`${API_BASE}/security/unblock/${id}`, { method: "PUT" });
       const data = await res.json();
       if (data.success) {
         setMessage({ type: "success", text: "IP unblocked successfully" });
@@ -85,53 +74,51 @@ export default function IPBlockManager() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto font-mono text-sm">
-      <div className="mb-8 flex items-center justify-between">
+    <div style={s.page}>
+      <style>{css}</style>
+      <div style={s.header}>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Shield className="w-6 h-6 text-[#da7708]" />
-            Security Center
-          </h1>
-          <p className="text-gray-500 mt-1">Manage IP restrictions and prevent fraudulent activities.</p>
+          <h1 style={s.title}>Security Center</h1>
+          <p style={s.titleSub}>Manage IP restrictions and prevent fraudulent activities.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div style={s.grid}>
         {/* Form Column */}
-        <div className="lg:col-span-1">
-          <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm sticky top-6">
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Plus className="w-4 h-4 text-[#da7708]" />
-              Block New IP
+        <div style={s.formCol}>
+          <div style={s.card}>
+            <h2 style={s.cardTitle}>
+              <Plus size={16} /> Block New IP
             </h2>
-            <form onSubmit={handleBlockIp} className="space-y-4 text-sm">
-              <div>
-                <label className="block text-gray-700 mb-1.5 font-medium">IP Address</label>
+            <form onSubmit={handleBlockIp} style={s.form}>
+              <div style={s.fieldGroup}>
+                <label style={s.label}>IP Address</label>
                 <input
                   type="text"
                   value={newIp}
                   onChange={(e) => setNewIp(e.target.value)}
                   placeholder="e.g. 192.168.1.1"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#da7708]/20 outline-none transition-all placeholder:text-gray-400"
+                  style={s.input}
                   required
                 />
               </div>
-              <div>
-                <label className="block text-gray-700 mb-1.5 font-medium">Reason (Optional)</label>
+              <div style={s.fieldGroup}>
+                <label style={s.label}>Reason (Optional)</label>
                 <textarea
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="e.g. Unusual order volume"
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#da7708]/20 outline-none transition-all resize-none placeholder:text-gray-400"
+                  style={s.textarea}
                 />
               </div>
               
               {message && (
-                <div className={`p-3 rounded-lg flex items-center gap-2 ${
-                  message.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-rose-50 text-rose-700 border border-rose-100'
-                }`}>
-                  {message.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                <div style={{
+                  ...s.message,
+                  ...(message.type === 'success' ? s.messageSuccess : s.messageError)
+                }}>
+                  {message.type === 'success' ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
                   {message.text}
                 </div>
               )}
@@ -139,74 +126,60 @@ export default function IPBlockManager() {
               <button
                 type="submit"
                 disabled={adding || !newIp}
-                className="w-full py-3 bg-[#da7708] hover:bg-[#b05f06] text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm shadow-[#da7708]/20"
+                style={{ ...s.submitBtn, ...(adding || !newIp ? s.btnDisabled : {}) }}
               >
-                {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-                Block Address
+                {adding ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <Shield size={16} />}
+                <span>Block Address</span>
               </button>
             </form>
           </div>
         </div>
 
         {/* List Column */}
-        <div className="lg:col-span-2">
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden min-h-[400px]">
-             <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                <h3 className="font-bold text-gray-800">Currently Blocked Addresses</h3>
-                <span className="text-[10px] bg-[#da7708]/10 text-[#da7708] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                  {blockedIps.length} Active Blocks
-                </span>
+        <div style={s.listCol}>
+          <div style={s.card}>
+             <div style={s.listHeader}>
+                <h3 style={s.cardTitle}>Currently Blocked</h3>
+                <span style={s.badge}>{blockedIps.length} Active Blocks</span>
              </div>
              
              {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-3 text-gray-400">
-                  <Loader2 className="w-8 h-8 animate-spin" />
-                  <p>Loading database...</p>
+                <div style={s.centerState}>
+                  <Loader2 size={32} style={{ animation: "spin 1s linear infinite", color: "var(--muted-foreground)" }} />
+                  <p style={s.stateText}>Loading database...</p>
                 </div>
              ) : blockedIps.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-4 text-center px-10">
-                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center">
-                    <ShieldOff className="w-8 h-8 text-gray-300" />
-                  </div>
-                  <div>
-                    <p className="text-gray-900 font-bold mb-1">No blocked IPs found</p>
-                    <p className="text-gray-400 text-xs text-balance">The database is currently clean of any restricted addresses.</p>
+                <div style={s.centerState}>
+                  <ShieldOff size={48} style={{ color: "var(--border)" }} />
+                  <div style={{ textAlign: "center" }}>
+                    <p style={{ fontWeight: 700, margin: "0 0 4px" }}>No blocked IPs</p>
+                    <p style={{ fontSize: 12, color: "var(--muted-foreground)" }}>The database is clear of restrictions.</p>
                   </div>
                 </div>
              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
+                <div style={s.tableWrap}>
+                  <table style={s.table}>
                     <thead>
-                      <tr className="bg-gray-50/50 text-gray-500 text-[10px] uppercase tracking-wider font-bold">
-                        <th className="px-6 py-3">IP Address</th>
-                        <th className="px-6 py-3">Blocked On</th>
-                        <th className="px-6 py-3">Reason</th>
-                        <th className="px-6 py-3 text-right">Actions</th>
+                      <tr>
+                        <th style={s.th}>IP Address</th>
+                        <th style={s.th}>Blocked On</th>
+                        <th style={s.th}>Reason</th>
+                        <th style={{ ...s.th, textAlign: "right" }}>Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody>
                       {blockedIps.map((ip) => (
-                        <tr key={ip._id} className="hover:bg-gray-50/40 transition-colors group">
-                          <td className="px-6 py-4">
-                            <code className="text-[#da7708] font-bold bg-[#da7708]/5 px-2 py-0.5 rounded">
-                              {ip.ipAddress}
-                            </code>
+                        <tr key={ip._id} style={s.tr}>
+                          <td style={s.td}>
+                            <code style={s.code}>{ip.ipAddress}</code>
                           </td>
-                          <td className="px-6 py-4 text-gray-500 text-xs">
-                            {new Date(ip.createdAt).toLocaleDateString()}
+                          <td style={s.td}>{new Date(ip.createdAt).toLocaleDateString()}</td>
+                          <td style={s.td}>
+                            <span style={s.reasonText}>{ip.reason || "No reason"}</span>
                           </td>
-                          <td className="px-6 py-4">
-                            <span className="text-gray-600 text-xs italic">
-                              {ip.reason || "No reason provided"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <button
-                              onClick={() => handleUnblock(ip._id)}
-                              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
-                              title="Unblock IP"
-                            >
-                              <ShieldOff className="w-4 h-4" />
+                          <td style={{ ...s.td, textAlign: "right" }}>
+                            <button onClick={() => handleUnblock(ip._id)} style={s.unblockBtn} title="Unblock IP">
+                              <ShieldOff size={14} />
                             </button>
                           </td>
                         </tr>
@@ -221,3 +194,45 @@ export default function IPBlockManager() {
     </div>
   );
 }
+
+const css = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  *, *::before, *::after { box-sizing: border-box; }
+`;
+
+const s = {
+  page: { maxWidth: 1100, margin: "0 auto", padding: "32px 24px", fontFamily: "'Inter', sans-serif", color: "var(--foreground)", animation: "fadeIn 0.4s ease" },
+  header: { marginBottom: 32 },
+  title: { fontSize: 32, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.03em" },
+  titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0 },
+  grid: { display: "grid", gridTemplateColumns: "1fr 2fr", gap: 32 },
+  formCol: { position: "sticky", top: 32 },
+  listCol: { minHeight: 400 },
+  card: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", animation: "slideUp 0.45s ease" },
+  cardTitle: { fontSize: 15, fontWeight: 700, margin: "20px 24px 16px", display: "flex", alignItems: "center", gap: 8 },
+  form: { padding: "0 24px 24px", display: "flex", flexDirection: "column", gap: 20 },
+  fieldGroup: { display: "flex", flexDirection: "column", gap: 8 },
+  label: { fontSize: 11, fontWeight: 700, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.05em" },
+  input: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 16px", fontSize: 14, color: "var(--foreground)", outline: "none", transition: "all 0.2s" },
+  textarea: { background: "var(--background)", border: "1px solid var(--border)", borderRadius: 8, padding: "12px 16px", fontSize: 14, color: "var(--foreground)", outline: "none", resize: "none", fontFamily: "inherit" },
+  submitBtn: { display: "flex", alignItems: "center", gap: 8, justifyContent: "center", background: "var(--foreground)", color: "var(--background)", border: "none", borderRadius: 10, padding: "14px", fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "all 0.2s" },
+  btnDisabled: { opacity: 0.5, cursor: "not-allowed" },
+  message: { padding: "10px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 },
+  messageSuccess: { background: "var(--success)", color: "white" },
+  messageError: { background: "var(--destructive)", color: "white" },
+  listHeader: { display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--secondary)", borderBottom: "1px solid var(--border)" },
+  badge: { fontSize: 10, fontWeight: 800, background: "var(--foreground)", color: "var(--background)", padding: "4px 12px", borderRadius: 20, marginRight: 24 },
+  centerState: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 40px", gap: 16 },
+  stateText: { fontSize: 13, color: "var(--muted-foreground)", fontWeight: 500 },
+  tableWrap: { overflowX: "auto" },
+  table: { width: "100%", borderCollapse: "collapse" },
+  th: { padding: "12px 24px", fontSize: 11, fontWeight: 800, color: "var(--muted-foreground)", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "left", background: "var(--secondary)", borderBottom: "1px solid var(--border)" },
+  td: { padding: "16px 24px", fontSize: 13, color: "var(--foreground)", borderBottom: "1px solid var(--border)" },
+  tr: { transition: "all 0.2s" },
+  code: { background: "var(--secondary)", padding: "4px 8px", borderRadius: 4, fontWeight: 700, color: "var(--foreground)", border: "1px solid var(--border)" },
+  reasonText: { color: "var(--muted-foreground)", fontStyle: "italic", fontSize: 12 },
+  unblockBtn: { background: "none", border: "1px solid var(--border)", color: "var(--destructive)", padding: "10px", borderRadius: 8, cursor: "pointer", display: "inline-flex", transition: "all 0.2s" },
+};
