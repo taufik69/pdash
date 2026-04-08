@@ -23,7 +23,7 @@ export default function FraudChecker() {
     formData.append('phone', phoneToSearch);
 
     try {
-      const response = await fetch('https://fraudchecker.link/api/v1/qc/', {
+      const response = await fetch('/api/qc/', {
           method: 'POST',
           headers: {
               'Authorization': `Bearer ${apiKey}`

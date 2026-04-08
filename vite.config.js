@@ -11,4 +11,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      '/api/qc': {
+        target: 'https://fraudchecker.link',
+        changeOrigin: true,
+        rewrite: () => '/api/v1/qc/'
+      }
+    }
+  }
 });
