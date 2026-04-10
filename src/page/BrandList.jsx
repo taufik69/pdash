@@ -366,7 +366,12 @@ const css = `
 
   .ct-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; gap: 16px; }
   .ct-title { font-size: 32px; font-weight: 800; color: var(--foreground); letter-spacing: -0.03em; margin: 0; }
-  .ct-stats { display: flex; gap: 16px; margin-bottom: 32px; }
+  .ct-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
   .ct-card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 24px; border-bottom: 1px solid var(--border); }
   .ct-search-wrap { display: flex; align-items: center; gap: 10px; background: var(--background); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; min-width: 300px; }
   

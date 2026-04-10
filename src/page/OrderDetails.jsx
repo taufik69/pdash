@@ -128,7 +128,7 @@ export default function OrderDetails() {
   const { data, isPending, isError } = getOrderByInvoice(invoiceId);
   const order = data?.data?.data || passedOrder;
 
-  if (isPending)
+  if (isPending && !order)
     return (
       <div style={s.page}>
         <style>{css}</style>

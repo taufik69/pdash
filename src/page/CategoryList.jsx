@@ -93,8 +93,8 @@ function useVirtualList(items, containerRef) {
 function StatCard({ icon: Icon, label, value, accent }) {
   return (
     <div style={s.statCard}>
-      <div style={{ ...s.statIcon, background: 'var(--secondary)', color: 'var(--foreground)' }}>
-        <Icon size={20} />
+      <div style={{ ...s.statIcon, background: accent + "18", color: accent }}>
+        <Icon size={18} />
       </div>
       <div>
         <div style={s.statValue}>{value}</div>
@@ -131,7 +131,7 @@ function CategoryRow({
         <span style={s.indexBadge}>{index + 1}</span>
       </td>
 
-      {/* Image */}
+      {/* Logo */}
       <td style={s.td}>
         {cat.image?.url ? (
           <img src={cat.image.url} alt={cat.name} style={s.catImg} />
@@ -159,18 +159,9 @@ function CategoryRow({
       <td style={{ ...s.td, textAlign: "center" }}>
         <div style={s.actionsCell}>
           <button
-            style={s.editBtn}
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(cat);
-            }}
-            title="Edit category"
-          >
-            <Edit2 size={14} />
-          </button>
-          <button
             style={{
               ...s.deleteBtn,
+              ...(isHovered ? s.deleteBtnHover : {}),
               ...(isDeleting ? s.btnDisabled : {}),
             }}
             onClick={(e) => {
@@ -310,23 +301,21 @@ export default function CategoryTable() {
       <div className="ct-stats">
         <StatCard
           icon={Layers}
-          label="Total Categories"
+          label="TOTAL CATEGORIES"
           value={categories.length}
+          accent="#d97706"
         />
         <StatCard
           icon={Layers}
-          label="Filtered Results"
+          label="FILTERED RESULTS"
           value={filtered.length}
+          accent="#818cf8"
         />
         <StatCard
           icon={Layers}
-          label="With Images"
+          label="WITH IMAGES"
           value={categories.filter((c) => c.image?.url).length}
-        />
-        <StatCard
-          icon={Layers}
-          label="No Description"
-          value={categories.filter((c) => !c.description).length}
+          accent="#34d399"
         />
       </div>
 
@@ -380,10 +369,10 @@ export default function CategoryTable() {
                 <tr>
                   {[
                     { label: "#", key: null },
-                    { label: "Image", key: null },
-                    { label: "Name", key: "name" },
-                    { label: "Description", key: null },
-                    { label: "Actions", key: null },
+                    { label: "LOGO", key: null },
+                    { label: "NAME", key: "name" },
+                    { label: "DESCRIPTION", key: null },
+                    { label: "ACTIONS", key: null },
                   ].map(({ label, key }) => (
                     <th
                       key={label}
@@ -504,6 +493,26 @@ const css = `
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }
   }
+
+  .ct-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; gap: 16px; }
+  .ct-title { font-size: 32px; font-weight: 800; color: var(--foreground); letter-spacing: -0.03em; margin: 0; }
+  .ct-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .ct-card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 24px; border-bottom: 1px solid var(--border); }
+  .ct-search-wrap { display: flex; align-items: center; gap: 10px; background: var(--background); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; min-width: 320px; }
+  
+  .ct-btn-add { 
+    display: inline-flex; align-items: center; gap: 8px; 
+    background: var(--primary); color: var(--primary-foreground); 
+    border: none; border-radius: 8px; padding: 10px 20px; 
+    font-size: 14px; font-weight: 700; cursor: pointer; 
+    transition: all 0.2s ease; 
+  }
+  .ct-btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
 `;
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
@@ -569,7 +578,7 @@ const s = {
     lineHeight: 1,
     letterSpacing: "-0.02em",
   },
-  statLabel: { fontSize: 13, color: "var(--muted-foreground)", marginTop: 4, fontWeight: 500 },
+  statLabel: { fontSize: 12, color: "var(--muted-foreground)", marginTop: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" },
 
   card: {
     background: "var(--background)",
@@ -702,38 +711,23 @@ const s = {
     gap: 8,
   },
 
-  editBtn: {
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    background: "var(--secondary)",
-    border: "1px solid var(--border)",
-    color: "var(--foreground)",
-    cursor: "pointer",
-    transition: "all 0.2s",
-  },
-  editBtnHover: {
-    background: "var(--accent)",
-  },
-
   deleteBtn: {
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    width: 34,
-    height: 34,
-    borderRadius: 9,
-    background: "var(--secondary)",
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    background: "transparent",
     border: "1px solid var(--border)",
     color: "var(--destructive)",
     cursor: "pointer",
     transition: "all 0.2s",
   },
   deleteBtnHover: {
-    background: "var(--destructive-foreground)",
+    background: "var(--destructive)",
+    color: "white",
+    borderColor: "var(--destructive)",
   },
   btnDisabled: { opacity: 0.45, cursor: "not-allowed", transform: "none" },
 

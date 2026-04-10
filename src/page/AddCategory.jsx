@@ -360,7 +360,7 @@ const css = `
 
 const s = {
   page: { 
-    maxWidth: 900, 
+    maxWidth: 1200, 
     margin: "0 auto", 
     fontFamily: "'Inter', sans-serif", 
     color: "var(--foreground)", 

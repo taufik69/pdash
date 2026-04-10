@@ -112,6 +112,7 @@ function UpdateStatusDialog({ open, currentStatus, onConfirm, onCancel, invoiceI
           value={status} 
           onChange={(e) => setStatus(e.target.value)}
           style={s.statusSelect}
+          className="order-status-select"
         >
           <option value="pending">Pending</option>
           <option value="processing">Processing</option>
@@ -241,6 +242,7 @@ function OrderRow({
   onDelete,
   isDeleting,
 }) {
+  const navigate = useNavigate();
   const itemCount = order.items?.length || 0;
   const itemSummary = order.items?.slice(0, 2).map((it, i) => (
     <div key={i} style={s.itemLine}>
@@ -268,7 +270,7 @@ function OrderRow({
       </td>
 
       <td style={s.td}>
-        <span style={s.invoiceId}>{order.invoiceId || "—"}</span>
+        <span style={s.invoiceId} className="invoice-id">{order.invoiceId || "—"}</span>
       </td>
 
       <td style={s.td}>
@@ -303,43 +305,45 @@ function OrderRow({
         <span style={s.noteText}>{order.note || "—"}</span>
       </td>
 
-      <td style={{ ...s.td, textAlign: "center" }}>
-        <div style={s.actionsCell}>
+      <td style={{ ...s.td, textAlign: "right" }}>
+        <div className="flex items-center justify-end gap-2 pr-4">
           <button
-            style={s.viewBtn}
+            className="px-5 py-2 bg-gray-500 rounded-lg text-white cursor-pointer hover:bg-gray-600 transition-colors shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
               onView(order);
             }}
             title="View Details"
           >
-            <Eye size={14} />
+            <Eye size={16} />
           </button>
+
           <button
-            style={s.fraudBtn}
+            className="px-5 py-2 bg-red-500 rounded-lg text-white cursor-pointer hover:bg-red-600 transition-colors shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/fraud-checker?phone=${order.customer?.phone}`);
             }}
             title="Fraud Check"
           >
-            <ShieldAlert size={14} />
+            <ShieldAlert size={16} />
           </button>
+
           <button
-            style={s.editBtn}
+            className="px-5 py-2 bg-green-500 rounded-lg text-white cursor-pointer hover:bg-green-600 transition-colors shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
               onUpdateStatus(order);
             }}
             title="Update Status"
           >
-            <PenLine size={14} />
+            <PenLine size={16} />
           </button>
+
           <button
-            style={{
-              ...s.deleteBtn,
-              ...(isDeleting ? s.btnDisabled : {}),
-            }}
+            className={`px-5 py-2 bg-red-500 rounded-lg text-white transition-all shadow-sm ${
+              isDeleting ? "opacity-50 cursor-not-allowed" : "hover:bg-red-600 cursor-pointer"
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               onDelete(order);
@@ -347,7 +351,11 @@ function OrderRow({
             disabled={isDeleting}
             title="Delete Order"
           >
-            <Trash2 size={14} />
+            {isDeleting ? (
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <Trash2 size={16} />
+            )}
           </button>
         </div>
       </td>
@@ -524,11 +532,6 @@ export default function OrderList() {
           icon={Users}
           label="Unique Customers"
           value={uniqueCustomers}
-        />
-        <StatCard
-          icon={CreditCard}
-          label="COD Orders"
-          value={codOrders}
         />
       </div>
 
@@ -721,7 +724,7 @@ const css = `
 
   .ol-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     margin-bottom: 32px;
   }
@@ -775,8 +778,9 @@ const css = `
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
   page: { 
-    maxWidth: 1200, 
+    maxWidth: 1550, 
     margin: "0 auto",
+    padding: "32px 24px 80px",
     fontFamily: "'Inter', sans-serif"
   },
   centerState: {
@@ -951,16 +955,16 @@ const s = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    gap: 4,
+    gap: 8,
   },
 
   viewBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     border: "1px solid var(--border)",
-    background: "transparent",
-    color: "var(--muted-foreground)",
+    background: "var(--secondary)",
+    color: "var(--foreground)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -968,11 +972,11 @@ const s = {
     transition: "all 0.2s",
   },
   fraudBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     border: "1px solid var(--border)",
-    background: "transparent",
+    background: "var(--secondary)",
     color: "var(--destructive)",
     display: "flex",
     alignItems: "center",
@@ -981,11 +985,11 @@ const s = {
     transition: "all 0.2s",
   },
   editBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     border: "1px solid var(--border)",
-    background: "transparent",
+    background: "var(--secondary)",
     color: "var(--success)",
     display: "flex",
     alignItems: "center",
@@ -994,11 +998,11 @@ const s = {
     transition: "all 0.2s",
   },
   deleteBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     border: "1px solid var(--border)",
-    background: "transparent",
+    background: "var(--secondary)",
     color: "var(--destructive)",
     display: "flex",
     alignItems: "center",
@@ -1020,8 +1024,8 @@ const s = {
     backdropFilter: "blur(4px)",
   },
   dialog: {
-    background: "#111827",
-    border: "1px solid #1f2937",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     borderRadius: 20,
     padding: "32px 28px",
     maxWidth: 380,
@@ -1048,18 +1052,18 @@ const s = {
   dialogTitle: {
     fontSize: 18,
     fontWeight: 700,
-    color: "#f3f4f6",
+    color: "var(--foreground)",
     fontFamily: "'Playfair Display', serif",
   },
-  dialogMsg: { fontSize: 13, color: "#9ca3af", lineHeight: 1.6 },
+  dialogMsg: { fontSize: 13, color: "var(--muted-foreground)", lineHeight: 1.6 },
   dialogActions: { display: "flex", gap: 10, marginTop: 8, width: "100%" },
   dialogCancel: {
     flex: 1,
     padding: "11px",
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid #1f2937",
+    background: "var(--secondary)",
+    border: "1px solid var(--border)",
     borderRadius: 10,
-    color: "#9ca3af",
+    color: "var(--muted-foreground)",
     fontSize: 14,
     fontWeight: 600,
     cursor: "pointer",
@@ -1068,14 +1072,40 @@ const s = {
   dialogConfirm: {
     flex: 1,
     padding: "11px",
-    background: "rgba(239,68,68,0.15)",
-    border: "1px solid rgba(239,68,68,0.3)",
+    background: "var(--destructive)",
+    border: "1px solid var(--destructive)",
     borderRadius: 10,
-    color: "#f87171",
+    color: "var(--destructive-foreground)",
     fontSize: 14,
     fontWeight: 600,
     cursor: "pointer",
     fontFamily: "'DM Sans', sans-serif",
+  },
+  dialogUpdateBtn: {
+    flex: 1,
+    padding: "11px",
+    background: "var(--success)",
+    border: "1px solid var(--success)",
+    borderRadius: 10,
+    color: "var(--success-foreground)",
+    fontSize: 14,
+    fontWeight: 600,
+    cursor: "pointer",
+    fontFamily: "'DM Sans', sans-serif",
+  },
+  statusSelect: {
+    width: "100%",
+    padding: "12px",
+    borderRadius: 10,
+    background: "var(--secondary)",
+    color: "var(--foreground)",
+    border: "1px solid var(--border)",
+    fontSize: 14,
+    fontWeight: 500,
+    marginBottom: 8,
+    outline: "none",
+    appearance: "none",
+    cursor: "pointer",
   },
 
   // ── Toast ──
@@ -1126,4 +1156,11 @@ const s = {
     opacity: 0.7,
     flexShrink: 0,
   },
+  footerVirt: {
+    fontSize: 11,
+    color: "var(--muted-foreground)",
+    opacity: 0.7,
+    marginLeft: 8,
+    fontStyle: "italic"
+  }
 };

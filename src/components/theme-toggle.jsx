@@ -30,10 +30,10 @@ const styles = `
     justify-content: center;
     width: 32px;
     height: 32px;
-    border-radius: 5px;
-    background: #1f2937;
-    border: 1px solid #374151;
-    cursor: pointer;
+    border-radius: 6px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    color: var(--foreground);
     padding: 0;
     transition:
       border-color 0.15s ease,
@@ -44,9 +44,9 @@ const styles = `
   }
 
   .theme-toggle-btn:hover {
-    background: #263040;
-    border-color: #da7708;
-    box-shadow: 0 0 10px #da770830;
+    background: var(--accent);
+    border-color: var(--foreground);
+    box-shadow: 0 0 10px var(--ring);
   }
 
   .theme-toggle-btn:active {
@@ -76,7 +76,7 @@ const styles = `
 
   /* Moon → muted blue-gray */
   .tt-icon.moon svg {
-    color: #9ca3af;
+    color: var(--muted-foreground);
   }
 
   .theme-toggle-btn:hover .tt-icon.sun svg {

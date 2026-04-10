@@ -24,7 +24,7 @@ const styles = `
     height: 100vh;
     width: 100%;
     background: var(--background);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Inter', 'JetBrains Mono', -apple-system, sans-serif;
     overflow: hidden;
   }
 

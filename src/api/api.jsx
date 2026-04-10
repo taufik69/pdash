@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 const api = axios.create({
-  baseURL: "https://totalbazar.bd/api/v1",
+  baseURL: import.meta.env.VITE_API_URL || "/api/v1",
   withCredentials: true,
 });
 
@@ -255,12 +255,11 @@ export const getOrders = (status = "") => {
 };
 
 // get order details
-export const getOrderByInvoice = () => {
+export const getOrderByInvoice = (invID) => {
   return useQuery({
-    queryKey: ["orderDetails"],
-    queryFn: (invID) => {
-      return api.get(`/order/get-order/${invID}`);
-    },
+    queryKey: ["orderDetails", invID],
+    queryFn: () => api.get(`/order/get-order/${invID}`),
+    enabled: !!invID,
   });
 };
 
