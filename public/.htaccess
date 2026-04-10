@@ -1,6 +1,11 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  
+  # Prevent redirection for the proxy script
+  RewriteCond %{REQUEST_URI} ^/qc-proxy\.php$ [NC]
+  RewriteRule ^(.*)$ - [L]
+  
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d

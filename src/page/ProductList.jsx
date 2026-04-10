@@ -386,7 +386,7 @@ function ProductRow({
     >
       {/* # */}
       <td style={s.td}>
-        <span style={s.indexBadge}>{index +  startIndex + 1}</span>
+        <span style={s.indexBadge}>{index + 1}</span>
       </td>
 
       {/* Image */}

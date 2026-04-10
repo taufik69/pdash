@@ -18,7 +18,7 @@ export default function FraudChecker() {
     setError(null);
     setResult(null);
 
-    const apiKey = "da8ef2fae0afe7a0178d70fc0ca36f91";
+    const apiKey = import.meta.env.VITE_QC_API_KEY || "c4f905ed02aa3fd8e2aeabbc8f4bd4f2";
     const formData = new FormData();
     formData.append('phone', phoneToSearch);
 
