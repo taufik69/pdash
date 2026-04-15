@@ -517,8 +517,8 @@ const css = `
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const s = {
-  page: { 
-    maxWidth: 1200, 
+  page: {
+    maxWidth: 1600,
     margin: "0 auto",
     padding: "32px 24px 80px",
     fontFamily: "'Inter', sans-serif"

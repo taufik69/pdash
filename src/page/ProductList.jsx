@@ -617,8 +617,8 @@ export default function ProductList() {
   const outOfStock = products.filter((p) => p.stock === 0).length;
   const avgPrice = products.length
     ? (
-        products.reduce((s, p) => s + Number(p.price || 0), 0) / products.length
-      ).toFixed(2)
+      products.reduce((s, p) => s + Number(p.price || 0), 0) / products.length
+    ).toFixed(2)
     : "0.00";
 
   // ── Loading / Error ─────────────────────────────────────────────────────────
@@ -969,8 +969,8 @@ const css = `
 `;
 
 const s = {
-  page: { 
-    maxWidth: 1200, 
+  page: {
+    maxWidth: 1600,
     margin: "0 auto",
     fontFamily: "'Inter', sans-serif"
   },

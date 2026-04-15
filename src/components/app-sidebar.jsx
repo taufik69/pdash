@@ -153,7 +153,7 @@ const styles = `
   }
 
   .sb-logo-name {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.02em;
     color: var(--foreground);
@@ -161,7 +161,7 @@ const styles = `
   }
 
   .sb-logo-sub {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--sb-muted);
   }
@@ -184,7 +184,7 @@ const styles = `
 
   /* ── Group label ───────────────────────────────────────── */
   [data-sidebar="group-label"] {
-    font-size: 11px !important;
+    font-size: 14px !important;
     font-weight: 600 !important;
     letter-spacing: 0.05em !important;
     text-transform: uppercase !important;
@@ -194,7 +194,7 @@ const styles = `
 
   /* ── Menu buttons ──────────────────────────────────────── */
   [data-sidebar="menu-button"] {
-    font-size: 13.5px !important;
+    font-size: 16.5px !important;
     font-weight: 500 !important;
     color: var(--sb-muted) !important;
     border-radius: 6px !important;
@@ -230,7 +230,7 @@ const styles = `
   }
 
   [data-sidebar="menu-sub-button"] {
-    font-size: 13px !important;
+    font-size: 16px !important;
     font-weight: 500 !important;
     color: var(--sb-muted) !important;
     padding: 8px 12px !important;

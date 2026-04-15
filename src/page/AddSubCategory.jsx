@@ -58,7 +58,7 @@ function ToastStack({ toasts, onRemove }) {
 export default function AddSubCategory() {
   const subCategoryMutate = createSubCategory();
   const { data: categoryData, isLoading: categoryLoading } = getCategory();
-  
+
   const toast = useToast();
 
   const [formData, setFormData] = useState({
@@ -66,7 +66,7 @@ export default function AddSubCategory() {
     category: "",
     description: "",
   });
-  
+
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -141,7 +141,7 @@ export default function AddSubCategory() {
         <form onSubmit={handleSubmit}>
           <div style={s.formBody}>
             <div className="ac-grid">
-              
+
               {/* ── Left col ── */}
               <div style={s.col}>
                 {/* Name */}
@@ -275,13 +275,13 @@ const css = `
 `;
 
 const s = {
-  page: { 
-    maxWidth: 1200, 
-    margin: "0 auto", 
-    fontFamily: "'Inter', sans-serif", 
-    color: "var(--foreground)", 
-    padding: "32px 24px 80px", 
-    animation: "fadeIn 0.4s ease" 
+  page: {
+    maxWidth: 1600,
+    margin: "0 auto",
+    fontFamily: "'Inter', sans-serif",
+    color: "var(--foreground)",
+    padding: "32px 24px 80px",
+    animation: "fadeIn 0.4s ease"
   },
 
   breadcrumb: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8 },

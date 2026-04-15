@@ -40,7 +40,7 @@ const styles = `
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 9px;
+    font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -69,7 +69,7 @@ const styles = `
     background: transparent;
     border: 1px solid transparent;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 16px;
     font-family: inherit;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -85,7 +85,7 @@ const styles = `
     top: 0;
     bottom: 0;
     width: 2px;
-    background: #da7708;
+    background: #374151;
     transform: scaleY(0);
     transition: transform 0.15s ease;
     border-radius: 0 1px 1px 0;
@@ -166,7 +166,7 @@ const styles = `
     border-radius: 3px;
     color: #9ca3af;
     background: transparent;
-    font-size: 12px;
+    font-size: 15px;
     font-family: inherit;
     font-weight: 400;
     letter-spacing: 0.01em;

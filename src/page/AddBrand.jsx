@@ -89,7 +89,7 @@ export default function AddBrand() {
     e.preventDefault();
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
-    
+
     // image is optional, but if present, validate
     if (formData.image) {
       const allowed = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
@@ -160,7 +160,7 @@ export default function AddBrand() {
         <form onSubmit={handleSubmit}>
           <div style={s.formBody}>
             <div className="ac-grid">
-              
+
               <div style={s.col}>
                 <div style={s.fieldGroup}>
                   <label style={s.label}>Brand Name <span style={s.required}>*</span></label>
@@ -176,8 +176,8 @@ export default function AddBrand() {
                 </div>
 
                 <div style={s.fieldGroup}>
-                  <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-                    <label style={s.label}>Description <span style={{color:"#6b7280", fontWeight:400, textTransform:"none"}}>(Optional)</span></label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <label style={s.label}>Description <span style={{ color: "#6b7280", fontWeight: 400, textTransform: "none" }}>(Optional)</span></label>
                     <span style={s.charCount}>{formData.description.length} chars</span>
                   </div>
                   <textarea
@@ -192,7 +192,7 @@ export default function AddBrand() {
 
               <div style={s.col}>
                 <div style={s.fieldGroup}>
-                  <label style={s.label}>Brand Logo <span style={{color:"#6b7280", fontWeight:400, textTransform:"none"}}>(Optional)</span></label>
+                  <label style={s.label}>Brand Logo <span style={{ color: "#6b7280", fontWeight: 400, textTransform: "none" }}>(Optional)</span></label>
 
                   {previewUrl ? (
                     <div style={s.previewWrap}>
@@ -295,13 +295,13 @@ const css = `
 `;
 
 const s = {
-  page: { 
-    maxWidth: 1200, 
-    margin: "0 auto", 
-    fontFamily: "'Inter', sans-serif", 
-    color: "var(--foreground)", 
-    padding: "32px 24px 80px", 
-    animation: "fadeIn 0.4s ease" 
+  page: {
+    maxWidth: 1600,
+    margin: "0 auto",
+    fontFamily: "'Inter', sans-serif",
+    color: "var(--foreground)",
+    padding: "32px 24px 80px",
+    animation: "fadeIn 0.4s ease"
   },
   breadcrumb: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8 },
   breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },

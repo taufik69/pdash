@@ -153,7 +153,7 @@ export default function AddProduct() {
   };
 
   const applyImages = (files) => {
-    if(!files) return;
+    if (!files) return;
     const arr = Array.from(files);
     setFormData((p) => ({ ...p, image: [...p.image, ...arr] }));
     const newPreviews = arr.map((f) => URL.createObjectURL(f));
@@ -216,15 +216,15 @@ export default function AddProduct() {
     payload.append("description", formData.description.trim());
     if (formData.shortDescription.trim()) payload.append("shortDescription", formData.shortDescription.trim());
     payload.append("category", formData.category);
-    if(formData.subcategory) payload.append("subcategory", formData.subcategory);
-    if(formData.brandRef) payload.append("brandRef", formData.brandRef);
+    if (formData.subcategory) payload.append("subcategory", formData.subcategory);
+    if (formData.brandRef) payload.append("brandRef", formData.brandRef);
 
     payload.append("price", Number(formData.price));
     if (formData.discountType) payload.append("discountType", formData.discountType);
     if (formData.discountValue) payload.append("discountValue", Number(formData.discountValue));
     payload.append("stock", Number(formData.stock));
     if (formData.totalReviews) payload.append("totalReviews", Number(formData.totalReviews));
-    
+
     // Flags
     payload.append("isNew", formData.isNew);
     payload.append("isSale", formData.isSale);
@@ -232,11 +232,11 @@ export default function AddProduct() {
     payload.append("isHot", formData.isHot);
     payload.append("isFeatured", formData.isFeatured);
     payload.append("isBestSelling", formData.isBestSelling);
-    
+
     // Arrays
     colors.forEach((c) => payload.append("color[]", c));
     sizes.forEach((sz) => payload.append("size[]", sz));
-    
+
     // Variants array
     if (formData.hasVariants && formData.variants.length > 0) {
       payload.append("variants", JSON.stringify(formData.variants));
@@ -279,7 +279,7 @@ export default function AddProduct() {
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-        
+
         {/* ── 1. Basic Info ── */}
         <SectionCard title="Basic Information" subtitle="Core product identity">
           <div className="ap-grid-2">
@@ -374,22 +374,22 @@ export default function AddProduct() {
                 <h4 style={s.vFormTitle}>Add Variant</h4>
                 <div className="ap-grid-3">
                   <Field label="Color *">
-                    <input value={vForm.color} onChange={e => setVForm(p => ({...p, color: e.target.value}))} placeholder="Red" style={s.input} />
+                    <input value={vForm.color} onChange={e => setVForm(p => ({ ...p, color: e.target.value }))} placeholder="Red" style={s.input} />
                   </Field>
                   <Field label="Size *">
-                    <input value={vForm.size} onChange={e => setVForm(p => ({...p, size: e.target.value}))} placeholder="XL" style={s.input} />
+                    <input value={vForm.size} onChange={e => setVForm(p => ({ ...p, size: e.target.value }))} placeholder="XL" style={s.input} />
                   </Field>
                   <Field label="Variant SKU" hint="(Optional)">
-                    <input value={vForm.sku} onChange={e => setVForm(p => ({...p, sku: e.target.value}))} placeholder="LJ-RED-XL" style={s.input} />
+                    <input value={vForm.sku} onChange={e => setVForm(p => ({ ...p, sku: e.target.value }))} placeholder="LJ-RED-XL" style={s.input} />
                   </Field>
                   <Field label="Price ($) *">
-                    <input type="number" value={vForm.price} onChange={e => setVForm(p => ({...p, price: e.target.value}))} placeholder="0.00" min="0" step="0.01" style={s.input} />
+                    <input type="number" value={vForm.price} onChange={e => setVForm(p => ({ ...p, price: e.target.value }))} placeholder="0.00" min="0" step="0.01" style={s.input} />
                   </Field>
                   <Field label="Stock *">
-                    <input type="number" value={vForm.stock} onChange={e => setVForm(p => ({...p, stock: e.target.value}))} placeholder="0" min="0" style={s.input} />
+                    <input type="number" value={vForm.stock} onChange={e => setVForm(p => ({ ...p, stock: e.target.value }))} placeholder="0" min="0" style={s.input} />
                   </Field>
                   <div style={{ display: "flex", alignItems: "flex-end" }}>
-                     <button type="button" onClick={addVariant} style={s.addVariantBtn}><Plus size={16}/> Add to List</button>
+                    <button type="button" onClick={addVariant} style={s.addVariantBtn}><Plus size={16} /> Add to List</button>
                   </div>
                 </div>
               </div>
@@ -405,7 +405,7 @@ export default function AddProduct() {
               {formData.color && (
                 <div style={s.tagRow}>
                   {formData.color.split(",").map((c) => c.trim()).filter(Boolean).map((c, i) => (
-                      <span key={i} style={s.tag}>{c}</span>
+                    <span key={i} style={s.tag}>{c}</span>
                   ))}
                 </div>
               )}
@@ -415,7 +415,7 @@ export default function AddProduct() {
               {formData.size && (
                 <div style={s.tagRow}>
                   {formData.size.split(",").map((sz) => sz.trim()).filter(Boolean).map((sz, i) => (
-                      <span key={i} style={s.tag}>{sz}</span>
+                    <span key={i} style={s.tag}>{sz}</span>
                   ))}
                 </div>
               )}
@@ -529,13 +529,13 @@ const css = `
 `;
 
 const s = {
-  page: { 
-    maxWidth: 1200, 
-    margin: "0 auto", 
-    fontFamily: "'Inter', sans-serif", 
-    color: "var(--foreground)", 
-    padding: "32px 24px 80px", 
-    animation: "fadeIn 0.4s ease" 
+  page: {
+    maxWidth: 1600,
+    margin: "0 auto",
+    fontFamily: "'Inter', sans-serif",
+    color: "var(--foreground)",
+    padding: "32px 24px 80px",
+    animation: "fadeIn 0.4s ease"
   },
   breadcrumb: { display: "flex", gap: 8, alignItems: "center", marginBottom: 8 },
   breadcrumbLink: { color: "var(--muted-foreground)", fontSize: 13, cursor: "pointer", fontWeight: 500 },
@@ -543,18 +543,18 @@ const s = {
   breadcrumbCurrent: { color: "var(--foreground)", fontSize: 13, fontWeight: 600 },
   titleSub: { fontSize: 14, color: "var(--muted-foreground)", margin: 0 },
 
-  sectionCard: { 
-    background: "var(--background)", 
-    border: "1px solid var(--border)", 
-    borderRadius: 12, 
-    overflow: "hidden", 
+  sectionCard: {
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
+    overflow: "hidden",
     animation: "slideUp 0.45s ease",
     boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
   },
-  sectionHeader: { 
-    padding: "20px 24px", 
-    borderBottom: "1px solid var(--border)", 
-    display: "flex", 
+  sectionHeader: {
+    padding: "20px 24px",
+    borderBottom: "1px solid var(--border)",
+    display: "flex",
     flexDirection: "column",
     gap: 4
   },
@@ -567,162 +567,162 @@ const s = {
   hint: { fontSize: 11, color: "var(--muted-foreground)", fontStyle: "italic" },
   errorMsg: { fontSize: 12, color: "var(--destructive)", margin: 0, fontWeight: 500 },
 
-  input: { 
-    width: "100%", 
-    background: "var(--background)", 
-    border: "1px solid var(--border)", 
-    borderRadius: 8, 
-    padding: "10px 14px", 
-    fontSize: 14, 
-    color: "var(--foreground)", 
-    outline: "none", 
+  input: {
+    width: "100%",
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 8,
+    padding: "10px 14px",
+    fontSize: 14,
+    color: "var(--foreground)",
+    outline: "none",
     transition: "border-color 0.2s",
     fontWeight: 500
   },
-  textarea: { 
-    width: "100%", 
-    background: "var(--background)", 
-    border: "1px solid var(--border)", 
-    borderRadius: 8, 
-    padding: "12px 14px", 
-    fontSize: 14, 
-    color: "var(--foreground)", 
-    outline: "none", 
-    resize: "vertical", 
-    lineHeight: 1.6, 
+  textarea: {
+    width: "100%",
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 8,
+    padding: "12px 14px",
+    fontSize: 14,
+    color: "var(--foreground)",
+    outline: "none",
+    resize: "vertical",
+    lineHeight: 1.6,
     transition: "border-color 0.2s",
     fontWeight: 500
   },
   inputError: { borderColor: "var(--destructive)" },
 
   tagRow: { display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 },
-  tag: { 
-    display: "inline-block", 
-    padding: "2px 10px", 
-    borderRadius: 6, 
-    fontSize: 11, 
+  tag: {
+    display: "inline-block",
+    padding: "2px 10px",
+    borderRadius: 6,
+    fontSize: 11,
     fontWeight: 700,
     background: "var(--secondary)",
     border: "1px solid var(--border)"
   },
 
-  flagLabel: { 
-    display: "flex", 
-    alignItems: "center", 
-    gap: 10, 
-    padding: "12px 16px", 
-    borderRadius: 8, 
-    background: "var(--background)", 
-    fontSize: 13, 
-    fontWeight: 600, 
-    color: "var(--foreground)", 
+  flagLabel: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    padding: "12px 16px",
+    borderRadius: 8,
+    background: "var(--background)",
+    fontSize: 13,
+    fontWeight: 600,
+    color: "var(--foreground)",
     userSelect: "none",
     transition: "all 0.2s"
   },
   flagDot: { width: 8, height: 8, borderRadius: "50%", flexShrink: 0 },
 
-  dropzone: { 
-    border: "2px dashed var(--border)", 
-    borderRadius: 12, 
-    padding: "48px 24px", 
-    display: "flex", 
-    flexDirection: "column", 
-    alignItems: "center", 
-    justifyContent: "center", 
-    gap: 12, 
-    cursor: "pointer", 
-    textAlign: "center", 
-    background: "var(--background)", 
-    transition: "all 0.2s" 
+  dropzone: {
+    border: "2px dashed var(--border)",
+    borderRadius: 12,
+    padding: "48px 24px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    cursor: "pointer",
+    textAlign: "center",
+    background: "var(--background)",
+    transition: "all 0.2s"
   },
   dropzoneActive: { borderColor: "var(--foreground)", background: "var(--secondary)" },
   dropzoneError: { borderColor: "var(--destructive)" },
-  dropIcon: { 
-    width: 48, height: 48, 
-    borderRadius: 10, 
-    background: "var(--secondary)", 
-    display: "flex", alignItems: "center", justifyContent: "center", 
-    marginBottom: 4 
+  dropIcon: {
+    width: 48, height: 48,
+    borderRadius: 10,
+    background: "var(--secondary)",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    marginBottom: 4
   },
   dropText: { fontSize: 14, color: "var(--foreground)", margin: 0, fontWeight: 600 },
   dropHint: { fontSize: 12, color: "var(--muted-foreground)", margin: 0 },
 
   previewItem: { position: "relative", aspectRatio: "1", borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" },
   previewImg: { width: "100%", height: "100%", objectFit: "cover" },
-  previewRemove: { 
-    position: "absolute", top: 4, right: 4, 
-    width: 20, height: 20, 
-    borderRadius: 4, 
-    background: "var(--destructive)", 
-    border: "none", color: "white", 
-    display: "flex", alignItems: "center", justifyContent: "center", 
-    cursor: "pointer" 
+  previewRemove: {
+    position: "absolute", top: 4, right: 4,
+    width: 20, height: 20,
+    borderRadius: 4,
+    background: "var(--destructive)",
+    border: "none", color: "white",
+    display: "flex", alignItems: "center", justifyContent: "center",
+    cursor: "pointer"
   },
-  addMoreBtn: { 
-    aspectRatio: "1", 
-    border: "1px dashed var(--border)", 
-    borderRadius: 8, 
-    display: "flex", flexDirection: "column", 
-    alignItems: "center", justifyContent: "center", 
-    cursor: "pointer", 
-    background: "var(--background)", 
-    transition: "all 0.2s" 
+  addMoreBtn: {
+    aspectRatio: "1",
+    border: "1px dashed var(--border)",
+    borderRadius: 8,
+    display: "flex", flexDirection: "column",
+    alignItems: "center", justifyContent: "center",
+    cursor: "pointer",
+    background: "var(--background)",
+    transition: "all 0.2s"
   },
 
-  submitRow: { 
-    display: "flex", alignItems: "center", justifyContent: "space-between", 
-    padding: "24px", 
-    background: "var(--background)", 
-    border: "1px solid var(--border)", 
-    borderRadius: 12, 
+  submitRow: {
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    padding: "24px",
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 12,
     marginTop: 8
   },
   footerHint: { fontSize: 13, color: "var(--muted-foreground)" },
   submitDisabled: { opacity: 0.5, cursor: "not-allowed" },
-  spinner: { 
-    display: "inline-block", 
-    width: 14, height: 14, 
-    border: "2px solid rgba(255,255,255,0.3)", 
-    borderTopColor: "white", 
-    borderRadius: "50%", 
-    animation: "spin 0.7s linear infinite" 
+  spinner: {
+    display: "inline-block",
+    width: 14, height: 14,
+    border: "2px solid rgba(255,255,255,0.3)",
+    borderTopColor: "white",
+    borderRadius: "50%",
+    animation: "spin 0.7s linear infinite"
   },
 
   variantContainer: { background: "var(--secondary)", borderRadius: 12, padding: 20, marginTop: 4 },
   vList: { display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 },
-  vItem: { 
-    display: "flex", justifyContent: "space-between", alignItems: "center", 
-    padding: "12px 16px", 
-    background: "var(--background)", 
-    border: "1px solid var(--border)", 
-    borderRadius: 8 
+  vItem: {
+    display: "flex", justifyContent: "space-between", alignItems: "center",
+    padding: "12px 16px",
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 8
   },
   vInfo: { display: "flex", flexDirection: "column", gap: 2 },
   vTitle: { fontSize: 14, fontWeight: 700, color: "var(--foreground)" },
   vDetails: { fontSize: 12, color: "var(--muted-foreground)" },
   vRemove: { background: "none", border: "none", color: "var(--destructive)", cursor: "pointer", padding: 4 },
-  vForm: { 
-    background: "var(--background)", 
-    border: "1px solid var(--border)", 
-    borderRadius: 8, 
+  vForm: {
+    background: "var(--background)",
+    border: "1px solid var(--border)",
+    borderRadius: 8,
     padding: 20,
     boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
   },
   vFormTitle: { fontSize: 12, fontWeight: 700, color: "var(--muted-foreground)", margin: "0 0 16px", textTransform: "uppercase" },
-  addVariantBtn: { 
-    width: "100%", height: 42, 
-    display: "flex", alignItems: "center", justifyContent: "center", 
-    gap: 8, background: "var(--foreground)", color: "var(--background)", 
-    border: "none", borderRadius: 8, 
-    fontSize: 13, fontWeight: 700, cursor: "pointer" 
+  addVariantBtn: {
+    width: "100%", height: 42,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    gap: 8, background: "var(--foreground)", color: "var(--background)",
+    border: "none", borderRadius: 8,
+    fontSize: 13, fontWeight: 700, cursor: "pointer"
   },
 
   toastStack: { position: "fixed", top: 24, right: 24, zIndex: 1100, display: "flex", flexDirection: "column", gap: 10, maxWidth: 360 },
-  toast: { 
-    display: "flex", alignItems: "center", gap: 12, 
-    padding: "14px 20px", borderRadius: 10, border: "1px solid", 
-    fontSize: 14, fontWeight: 600, boxShadow: "0 10px 40px rgba(0,0,0,0.1)", 
-    animation: "toastSlide 0.3s ease" 
+  toast: {
+    display: "flex", alignItems: "center", gap: 12,
+    padding: "14px 20px", borderRadius: 10, border: "1px solid",
+    fontSize: 14, fontWeight: 600, boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+    animation: "toastSlide 0.3s ease"
   },
   toastIcon: { fontWeight: 700 },
   toastMsg: { flex: 1 },
