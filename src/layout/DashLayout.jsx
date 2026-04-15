@@ -159,7 +159,7 @@ function DashboardLayout() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <ThemeToggle />
                 <a
-                  href="http://localhost:3000"
+                  href="https://totalbazar.bd"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
